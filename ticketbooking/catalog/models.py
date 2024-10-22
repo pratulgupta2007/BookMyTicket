@@ -63,7 +63,7 @@ class shows(models.Model):
     language=models.CharField(max_length=20, help_text="Enter movie language: ")
     date_time=models.DateTimeField()
     duration=models.DurationField()
-    seats=models.BinaryField(max_length=2000)
+    seats=models.IntegerField(default=0)
 
     def __str__(self):
         return self.movie
