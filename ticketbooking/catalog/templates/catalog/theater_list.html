@@ -1,0 +1,14 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h1><center>Theaters</center></h1>
+<ul>
+    {% for theater in theaterlist %}
+        <center>
+               <a href="{{theater.get_theater_url}}">
+              {{ theater.theater_name }}</a>
+              
+        </center>
+    {% endfor %}
+</ul>
+  {% endblock %}

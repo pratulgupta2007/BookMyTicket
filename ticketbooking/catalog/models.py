@@ -42,8 +42,7 @@ class adminuser(models.Model):
     walletid=models.ForeignKey(wallet, on_delete=models.CASCADE)
 
     #Theater related information
-    theater_name=models.CharField(max_length=200)
-    theater_address=models.CharField(max_length=200)
+    theater_name=models.CharField(max_length=200, unique=True, help_text="Enter theater name and address: ")
     theater_phone=models.CharField(max_length=13)
     theater_email=models.EmailField()
     revenue=models.DecimalField(max_digits=20, decimal_places=2)
@@ -51,25 +50,41 @@ class adminuser(models.Model):
     def __str__(self):
         return self.theater_name
     
-
+    def get_theater_url(self):
+        return self.aid
+    
     def get_absolute_url(self):
         return reverse('admin-info', args=[str(self.aid)])
+
+class movies(models.Model):
+    movieID=models.UUIDField(default=uuid.uuid4, primary_key=True)
+    movie=models.CharField(max_length=255)
+    type=models.CharField(max_length=20, help_text="Enter movie viewing type: ")
+    rating=models.CharField(max_length=5, default='UA')
+    language=models.CharField(max_length=20, help_text="Enter movie language: ")
+    duration=models.DurationField()
+
+    def _str_(self):
+        return str(self.movieID)
+    
+    def get_absolute_url(self):
+        return "%s" %(self.movieID)
+
 
 
 class shows(models.Model):
     showID=models.UUIDField(default=uuid.uuid4, primary_key=True)
     adminID=models.ForeignKey(adminuser, on_delete=models.CASCADE)
-    movie=models.CharField(max_length=255, help_text="Enter a movie name: ")
-    language=models.CharField(max_length=20, help_text="Enter movie language: ")
+    movieID=models.ForeignKey(movies, on_delete=models.CASCADE)
     date_time=models.DateTimeField()
-    duration=models.DurationField()
     seats=models.IntegerField(default=0)
+    price=models.DecimalField(max_digits=10, decimal_places= 2, default=0.0)
 
     def __str__(self):
-        return self.movie
+        return str(self.showID)
 
     def get_absolute_url(self):
-        return reverse('show', args=[str(self.showID)])
+        return reverse('shows', args=[str(self.showID)])
 
 class foods(models.Model):
     foodID=models.CharField(max_length=20, primary_key=True)

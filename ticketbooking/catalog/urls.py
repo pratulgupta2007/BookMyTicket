@@ -1,8 +1,10 @@
-from django.urls import path
+from django.urls import path, re_path
 from . import views
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('shows/', views.ShowListView.as_view(), name='shows'),
-    #path('shows/<int:pk>', views.show_detail_view.as_view(), name='showdetail'),
+    path('movies/', views.MoviesListView.as_view(), name='movies'),
+    path('movies/<uuid:pk>', views.MovieDetailView.as_view()),
+    path('theaters/', views.TheaterListView.as_view(), name='theaters'),
+    path('theaters/<uuid:pk>', views.TheaterDetailView.as_view()),
 ]
