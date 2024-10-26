@@ -1,7 +1,9 @@
 from django.shortcuts import render
 from django.views import generic
 import random
-from django.shortcuts import get_object_or_404
+from django.conf import settings
+from django.urls import reverse
+import datetime
 
 # Create your views here.
 from .models import wallet, transactions, user, adminuser, foods, shows, movies
@@ -26,7 +28,14 @@ class MoviesListView(generic.ListView):
 
 class MovieDetailView(generic.DetailView):
     model = movies
-    context_object_name = 'movie'
+    def get_context_data(self, **kwargs):
+        context = super(MovieDetailView, self).get_context_data(**kwargs)
+        context['languages']=shows.objects.filter(movie_id=context['movies'].movie).order_by('language').values_list('language', flat=True).distinct()
+        context['types']=shows.objects.filter(movie_id=context['movies'].movie).order_by('type').values_list('type', flat=True).distinct()
+        context['shows']=[[x, ''] for x in shows.objects.filter(movie_id=context['movies'].movie).order_by('date_time')]
+        for x in context['shows']:
+            x[1] = adminuser.objects.filter(theater_name=x[0].get_theatername())[0].get_theater_url()
+        return context
     template_name = 'catalog/movie_detail.html'
 
 class TheaterListView(generic.ListView):
@@ -36,5 +45,15 @@ class TheaterListView(generic.ListView):
 
 class TheaterDetailView(generic.DetailView):
     model = adminuser
-    context_object_name = 'theater'
     template_name = 'catalog/theater_detail.html'
+    def get_context_data(self, **kwargs):
+        context = super(TheaterDetailView, self).get_context_data(**kwargs)
+        context['shows']=[[x, ''] for x in shows.objects.filter(adminID=context['adminuser'].aid).order_by('date_time')]
+        for x in context['shows']:
+            x[1] = movies.objects.filter(movie=x[0].get_moviename())[0].get_absolute_url()
+        return context
+
+class ShowDetailView(generic.DetailView):
+    model=shows
+    context_object_name='show'
+    template_name='catalog/show_detail.html'

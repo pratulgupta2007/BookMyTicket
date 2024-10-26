@@ -3,26 +3,42 @@
 {% block content %}
 
   <p></p>
-  <h1><center>{{ theater.theater_name }}</center></h1>
+  <h1><center>{{ adminuser.theater_name }}</center></h1>
 
   
 
   <div style="margin-left:50px;margin-top:20px">
-    <h4>Shows</h4>
 
-    <!--
-    {% for copy in book.bookinstance_set.all %}
-      <hr />
-      <p
-        class="{% if copy.status == 'a' %}text-success{% elif copy.status == 'm' %}text-danger{% else %}text-warning{% endif %}">
-        {{ copy.get_status_display }}
-      </p>
-      {% if copy.status != 'a' %}
-        <p><strong>Due to be returned:</strong> {{ copy.due_back }}</p>
-      {% endif %}
-      <p><strong>Imprint:</strong> {{ copy.imprint }}</p>
-      <p class="text-muted"><strong>Id:</strong> {{ copy.id }}</p>
-    {% endfor %}-->
+
+
+    <table class="table table-hover">
+      <thead class="thead-dark">
+        <tr>
+          <th scope="col"><h4>Movie Name</h4></th>
+          <th scope="col"><h4>Date</h4></th>
+          <th scope="col"><h4>Time</h4></th>
+          <th scope="col"><h4>Viewing Experience</h4></th>
+          <th scope="col"><h4>Language</h4></th>
+          <th scope="col"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for show, showurl in shows %}
+        <tr>
+          <th scope="row"><a href="{{showurl}}">{{show.get_moviename}}</a></th>
+          <td>{{show.get_date}}</td>
+          <td>{{show.get_time}}</td>
+          <td>{{show.type}}</td>
+          <td>{{show.language}}</td>
+          <td><a type="button" class="btn btn-primary" href="{{show.get_absolute_url}}" role="button">Book</a></td>
+        </tr>
+          
+        {% endfor %}
+        
+      </tbody>
+    </table>
+    
+    
   </div>
 
   {% endblock %}
