@@ -2,11 +2,15 @@ from django.db import models
 from django.urls import reverse
 import uuid
 from django.http import HttpRequest
+from django.conf import settings
 
 class wallet(models.Model):
     walletid=models.UUIDField(default=uuid.uuid4, primary_key=True)
     balance=models.DecimalField(max_digits=10, decimal_places=2)
     transaction=models.BinaryField(max_length=2000)
+
+    def __str__(self):
+        return str(self.walletid)
 
 class transactions(models.Model):
     transactionsID=models.UUIDField(default=uuid.uuid4, primary_key=True)
@@ -22,18 +26,11 @@ class transactions(models.Model):
 
 
 class user(models.Model):
-    uid=models.UUIDField(default=uuid.uuid4, primary_key=True)
-    name=models.CharField(max_length=100)
-    email=models.EmailField(unique=True)
+    user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE)
     walletid=models.ForeignKey(wallet, on_delete=models.CASCADE)
-    shows=models.BinaryField(max_length=2000)
-    food=models.BinaryField(max_length=2000)
 
     def __str__(self):
-        return self.name
-
-    def get_absolute_url(self):
-        return reverse('user-info', args=[str(self.uid)])
+        return str(self.user)
 
 
 class adminuser(models.Model):
@@ -89,7 +86,7 @@ class shows(models.Model):
     language=models.CharField(max_length=20, help_text="Enter movie language: ")
 
     def __str__(self):
-        return str(self.showID)
+        return str(self.adminID)+' | '+self.movie.movie + ' ' + self.type+ ' | ' + str(self.date_time)
 
     def get_absolute_url(self):
         return reverse('show-detail', args=[str(self.showID)])
@@ -107,7 +104,7 @@ class shows(models.Model):
         return self.date_time.time()
 
 class foods(models.Model):
-    foodID=models.CharField(max_length=20, primary_key=True)
+    foodID=models.UUIDField(default=uuid.uuid4, primary_key=True)
     adminID=models.ForeignKey(adminuser, on_delete=models.CASCADE)
     itemname=models.CharField(max_length=255, help_text="Enter item name: ", unique=True)
     price=models.DecimalField(max_digits=5, decimal_places=2, help_text="Enter item price: ")
@@ -118,3 +115,9 @@ class foods(models.Model):
 
     def get_absolute_url(self):
         return reverse('show', args=[str(self.foodID)])
+
+class tickets(models.Model):
+    ticketID=models.UUIDField(default=uuid.uuid4, primary_key=True)
+    show=models.ForeignKey(shows, on_delete=models.CASCADE)
+    food=models.ForeignKey(foods, on_delete=models.CASCADE, null=True)
+    user=models.ForeignKey(user, on_delete=models.CASCADE, null=True)

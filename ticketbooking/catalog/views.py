@@ -6,7 +6,7 @@ from django.urls import reverse
 import datetime
 
 # Create your views here.
-from .models import wallet, transactions, user, adminuser, foods, shows, movies
+from .models import wallet, transactions,user,  adminuser, foods, shows, movies
 def index(request):
 
     movielist=movies.objects.order_by('movie').values_list('movie').distinct()

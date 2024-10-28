@@ -24,5 +24,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('bookmyticket/', include('catalog.urls')),
     path('', RedirectView.as_view(url='bookmyticket/', permanent=True)),
+    path('accounts/', include('django.contrib.auth.urls')),
 ] 
 urlpatterns.extend(static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))
