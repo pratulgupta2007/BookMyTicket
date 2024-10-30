@@ -21,7 +21,9 @@
                 </div>
             </div>
             {% if form.errors %}
-                <p>Your username and password didn't match. Please try again.</p>
+            <div class="alert alert-danger" role="alert">
+                Your username and password didn't match.
+              </div>
             {% endif %}
         
             {% if next %}

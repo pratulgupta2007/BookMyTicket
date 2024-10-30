@@ -2,7 +2,7 @@
 
 {% block content %}
 <h1><center>Theaters</center></h1>
-<ul>
+
     {% for theater in theaterlist %}
         <center>
                <a href="{{theater.get_theater_url}}">
@@ -10,5 +10,5 @@
               
         </center>
     {% endfor %}
-</ul>
+
   {% endblock %}

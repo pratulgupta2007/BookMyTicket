@@ -4,6 +4,7 @@ import random
 from django.conf import settings
 from django.urls import reverse
 import datetime
+from django.utils import timezone
 
 # Create your views here.
 from .models import wallet, transactions,user,  adminuser, foods, shows, movies
@@ -30,9 +31,10 @@ class MovieDetailView(generic.DetailView):
     model = movies
     def get_context_data(self, **kwargs):
         context = super(MovieDetailView, self).get_context_data(**kwargs)
-        context['languages']=shows.objects.filter(movie_id=context['movies'].movie).order_by('language').values_list('language', flat=True).distinct()
-        context['types']=shows.objects.filter(movie_id=context['movies'].movie).order_by('type').values_list('type', flat=True).distinct()
-        context['shows']=[[x, ''] for x in shows.objects.filter(movie_id=context['movies'].movie).order_by('date_time')]
+        showslist=shows.objects.filter(movie_id=context['movies'].movie).filter(date_time__gt=timezone.now())
+        context['languages']=showslist.order_by('language').values_list('language', flat=True).distinct()
+        context['types']=showslist.order_by('type').values_list('type', flat=True).distinct()
+        context['shows']=[[x, ''] for x in showslist.order_by('date_time')]
         for x in context['shows']:
             x[1] = adminuser.objects.filter(theater_name=x[0].get_theatername())[0].get_theater_url()
         return context
@@ -48,7 +50,8 @@ class TheaterDetailView(generic.DetailView):
     template_name = 'catalog/theater_detail.html'
     def get_context_data(self, **kwargs):
         context = super(TheaterDetailView, self).get_context_data(**kwargs)
-        context['shows']=[[x, ''] for x in shows.objects.filter(adminID=context['adminuser'].aid).order_by('date_time')]
+        showslist=shows.objects.filter(adminID=context['adminuser'].aid).filter(date_time__gt=timezone.now())
+        context['shows']=[[x, ''] for x in showslist.order_by('date_time')]
         for x in context['shows']:
             x[1] = movies.objects.filter(movie=x[0].get_moviename())[0].get_absolute_url()
         return context

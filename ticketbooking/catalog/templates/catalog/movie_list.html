@@ -2,7 +2,7 @@
 
 {% block content %}
 <h1><center>Movies</center></h1>
-    <ul>
+
     <div class="container">
     {% for movie in movielist %}
       {% if forloop.first %}<div class="row">{% endif %}
@@ -17,5 +17,5 @@
     {% if forloop.last %}</div>{% endif %}
     {% endfor %}
     </div>
-    </ul> 
+
   {% endblock %}
