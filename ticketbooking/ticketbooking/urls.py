@@ -20,7 +20,7 @@ from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
-from catalog.views import ProfileView
+from catalog.views import ProfileView, AddBalanceView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,6 +28,7 @@ urlpatterns = [
     path('', RedirectView.as_view(url='bookmyticket/', permanent=True)),
     path('accounts/', include('allauth.urls')),
     path('accounts/profile', ProfileView, name='profile'),
+    path('accounts/balance', AddBalanceView, name='balanceview'),
     path('logout', LogoutView.as_view()),
 ] 
 urlpatterns.extend(static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))

@@ -4,10 +4,12 @@ import uuid
 from django.http import HttpRequest
 from django.conf import settings
 
+from django.contrib.auth import get_user_model
+User = get_user_model()
+
 class wallet(models.Model):
     walletid=models.UUIDField(default=uuid.uuid4, primary_key=True)
-    balance=models.DecimalField(max_digits=10, decimal_places=2)
-    transaction=models.BinaryField(max_length=2000)
+    balance=models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
     def __str__(self):
         return str(self.walletid)

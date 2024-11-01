@@ -7,7 +7,7 @@
         {% if user.first_name %}
                 {{ user.first_name}} {{user.last_name}}
                 {% else %}
-                {{user.email}}{% endif %}!</h2>
+                Guest{% endif %}!</h2>
 </center>
 
 <div style="max-width:70%;margin-left:15%;margin-right:15%;">
@@ -20,6 +20,11 @@
                 <td></td>
             </tr>
             <tr>
+                <td>Balance: </td>
+                <td>{{balance}}</td>
+                <td><a type="submit" href="{% url 'balanceview' %}" class="btn btn-primary col-6">Add Balance</a></td>
+            </tr>
+            <tr>
                 <td>Email:</td>
                 <td>
                     {% if user.email %}
@@ -29,7 +34,7 @@
                     {% endif %}
                 </td>
                 <td>
-                    <a type="submit" href="{% url 'account_email' %}" class="btn btn-primary col-12">Edit</a>
+                    <a type="submit" href="{% url 'account_email' %}" class="btn btn-primary col-6">Edit</a>
                 </td>
             </tr>
 
@@ -39,7 +44,7 @@
                 </td>
                 <td></td>
                 <td>
-                    <a type="submit" href="{% url 'account_change_password' %}" class="btn btn-primary col-12">Edit</a>
+                    <a type="submit" href="{% url 'account_change_password' %}" class="btn btn-primary col-6">Edit</a>
                 </td>
             </tr>
             <tr>
@@ -48,7 +53,7 @@
                 </td>
                 <td></td>
                 <td>
-                    <a type="submit" href="{% url 'socialaccount_connections' %}" class="btn btn-primary col-12">Edit</a>
+                    <a type="submit" href="{% url 'socialaccount_connections' %}" class="btn btn-primary col-6">Edit</a>
                 </td>
             </tr>
 

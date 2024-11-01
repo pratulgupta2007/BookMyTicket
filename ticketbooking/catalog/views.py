@@ -61,4 +61,8 @@ class ShowDetailView(generic.DetailView):
 
 @login_required
 def ProfileView(request):
-    return render(request, 'account/profile.html')
+    context={'balance': user.objects.filter(user=(request.user))[0].walletid.balance}
+    return render(request, 'account/profile.html', context=context)
+
+def AddBalanceView(request):
+    return render(request, 'account/balance.html')
