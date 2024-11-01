@@ -1,0 +1,60 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+{% load socialaccount %}
+
+
+  
+<div style="margin-left:35%;margin-top:10%;margin-right:35%;margin-bottom:10%;">
+
+  <center>
+    <p>Don't have an account? <a href="{% url 'account_signup' %}">Sign Up</a></p>
+    <form method="post" action="{% url 'account_login' %}">
+        {% csrf_token %}
+        <div class="container">
+            <div class="row" style="margin-top:10px;">
+                <div class="form-group">
+                    <input class="form-control" type="text" name="login" autofocus autocapitalize="none" autocomplete="username" maxlength="150" required id="id_username"  placeholder="Username">
+                </div>
+            </div>
+            <div class="row" style="margin-top:10px; margin-bottom:10px;">
+                <div class="form-group">
+                    <input type="password" class="form-control" name="password" autocomplete="current-password" required id="id_password" placeholder="Password">
+                </div>
+            </div>
+
+            <label for="id_remember">Remember Me:</label>
+            <input type="checkbox" name="remember" id="id_remember">
+
+
+            {% if form.errors %}
+            <div class="alert alert-danger" role="alert">
+                Your username and password didn't match.
+              </div>
+            {% endif %}
+        
+            {% if next %}
+                {% if user.is_authenticated %}
+                    <p>Your account doesn't have access to this page. To proceed,
+                    please login with an account that has access.</p>
+                {% endif %}
+            {% endif %}
+            <div class="row" style="margin-top:10px;margin-bottom:10px;">
+                <center><button type="submit" class="btn btn-primary col-12">Submit</button></center>
+                <input type="hidden" name="next" value="{{ next }}">
+            </div>
+            
+        </div>
+    </form>
+
+
+
+
+    <a href="{% provider_login_url 'google' %}">Login with Google</a>
+    <p><a href="{% url 'account_reset_password' %}">Lost password?</a></p>
+    
+</center>
+
+</div>
+
+{% endblock %}

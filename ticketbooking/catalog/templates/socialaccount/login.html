@@ -1,0 +1,16 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<center>
+<h3>
+    Sign In Via Google
+</h3>
+<p>
+    You are about to sign in using a third-party account from {{provider}}.
+</p>
+<form method="post" action="">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-primary"> Continue </button>
+</form>
+</center>
+{% endblock %}

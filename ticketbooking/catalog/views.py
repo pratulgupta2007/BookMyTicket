@@ -1,10 +1,8 @@
 from django.shortcuts import render
 from django.views import generic
 import random
-from django.conf import settings
-from django.urls import reverse
-import datetime
 from django.utils import timezone
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 from .models import wallet, transactions,user,  adminuser, foods, shows, movies
@@ -60,3 +58,7 @@ class ShowDetailView(generic.DetailView):
     model=shows
     context_object_name='show'
     template_name='catalog/show_detail.html'
+
+@login_required
+def ProfileView(request):
+    return render(request, 'account/profile.html')

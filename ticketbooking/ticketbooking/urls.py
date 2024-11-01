@@ -19,11 +19,15 @@ from django.urls import path, include
 from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
+from django.contrib.auth.views import LogoutView
+from catalog.views import ProfileView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('bookmyticket/', include('catalog.urls')),
     path('', RedirectView.as_view(url='bookmyticket/', permanent=True)),
-    path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/', include('allauth.urls')),
+    path('accounts/profile', ProfileView, name='profile'),
+    path('logout', LogoutView.as_view()),
 ] 
 urlpatterns.extend(static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))

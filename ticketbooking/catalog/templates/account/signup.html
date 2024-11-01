@@ -1,0 +1,58 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+{% load socialaccount %}
+
+<div style="margin-left:35%;margin-top:10%;margin-right:35%;margin-bottom:10%;">
+
+    <center>
+      <form method="post" action="{% url 'account_signup' %}">
+          {% csrf_token %}
+          <div class="container">
+              <div class="row" style="margin-top:10px;">
+                <div class="form-group">
+                    <input class="form-control" type="email" name="email" autofocus autocapitalize="none" autocomplete="email" minlength="1" maxlength="320" required id="id_email"  placeholder="Email">
+                </div>
+              </div>
+              {% if form.errors.email %}
+                    <div class="alert alert-danger"  style="margin-top:10px;" role="alert">
+                        {{form.errors.email}}
+                    </div>
+                {% endif %}
+              <div class="row" style="margin-top:10px; margin-bottom:10px;">
+                  <div class="form-group">
+                      <input type="password" class="form-control" name="password1" autocomplete="new-password" required id="id_password1" placeholder="Password">
+                  </div>
+              </div>
+              {% if form.errors.password1 %}
+                    <div class="alert alert-danger" role="alert">
+                        {{form.errors.password1}}
+                    </div>
+                {% endif %}
+              <div class="row" style="margin-top:10px; margin-bottom:10px;">
+                <div class="form-group">
+                    <input type="password" class="form-control" name="password2" autocomplete="new-password" required id="id_password2" placeholder="Confirm Password">
+                </div>
+              </div>
+              {% if form.errors.password2 %}
+                    <div class="alert alert-danger" role="alert">
+                        {{form.errors.password2}}
+                    </div>
+                {% endif %}
+        
+              <div class="row" style="margin-top:10px;margin-bottom:10px;">
+                  <center><button type="submit" class="btn btn-primary col-12">Submit</button></center>
+              </div>
+              
+          </div>
+      </form>
+  
+  
+  
+  
+      <a href="{% provider_login_url 'google' %}">Login with Google</a>
+  </center>
+  
+  </div>
+
+{% endblock %}
