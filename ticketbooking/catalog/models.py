@@ -88,7 +88,7 @@ class shows(models.Model):
     language=models.CharField(max_length=20, help_text="Enter movie language: ")
 
     def __str__(self):
-        return str(self.adminID)+' | '+self.movie.movie + ' ' + self.type+ ' | ' + str(self.date_time)
+        return str(self.adminID)+' | '+self.movie.movie + ' ' + self.type+ ' | ' + str(self.date_time.time()) + ' ' + str(self.date_time.date())
 
     def get_absolute_url(self):
         return reverse('show-detail', args=[str(self.showID)])
@@ -104,6 +104,9 @@ class shows(models.Model):
     
     def get_time(self):
         return self.date_time.time()
+    
+    def availableseats(self):
+        return self.seats-self.seats_booked
 
 class foods(models.Model):
     foodID=models.UUIDField(default=uuid.uuid4, primary_key=True)
@@ -120,6 +123,7 @@ class foods(models.Model):
 
 class tickets(models.Model):
     ticketID=models.UUIDField(default=uuid.uuid4, primary_key=True)
+    count=models.IntegerField(default=1)
+    total=models.DecimalField(max_digits=8, decimal_places=2, default=0)
     show=models.ForeignKey(shows, on_delete=models.CASCADE)
-    food=models.ForeignKey(foods, on_delete=models.CASCADE, null=True)
-    user=models.ForeignKey(user, on_delete=models.CASCADE, null=True)
+    user=models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)

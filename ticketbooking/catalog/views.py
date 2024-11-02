@@ -1,11 +1,19 @@
-from django.shortcuts import render
 from django.views import generic
 import random
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.edit import FormMixin
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
+from django.contrib import messages
+import json
+import uuid
 
 # Create your views here.
-from .models import wallet, transactions,user,  adminuser, foods, shows, movies
+from .models import wallet, transactions,user,  adminuser, foods, shows, movies, tickets
+from .forms import TicketForm, BillingForm
 def index(request):
 
     movielist=movies.objects.order_by('movie').values_list('movie').distinct()
@@ -54,15 +62,59 @@ class TheaterDetailView(generic.DetailView):
             x[1] = movies.objects.filter(movie=x[0].get_moviename())[0].get_absolute_url()
         return context
 
-class ShowDetailView(generic.DetailView):
-    model=shows
-    context_object_name='show'
-    template_name='catalog/show_detail.html'
+@login_required
+def ShowDetailView(request, pk):
+    error=None
+    show=shows.objects.get(pk=pk)
+    if request.method == 'POST':
+        form = TicketForm(request.POST)
+        if form.is_valid():
+            data=form.cleaned_data['ticket_no']
+            if timezone.now()>show.date_time:
+                error='Show date passed'
+            elif data>show.availableseats():
+                error='Seats not available'
+            else:
+                tempticket=json.dumps({'count': str(data), 'show':str(show.showID), 'user':str(request.user), 'price':str(show.price)})
+                request.session['tempticket']=tempticket
+                return HttpResponseRedirect(reverse('billing'))
+    else:
+        form = TicketForm()
+
+    context={'show': show, 'form': form, 'error': error}
+    return render(request, 'catalog/show_detail.html', context=context)
 
 @login_required
 def ProfileView(request):
     context={'balance': user.objects.filter(user=(request.user))[0].walletid.balance}
     return render(request, 'account/profile.html', context=context)
 
+@login_required
 def AddBalanceView(request):
     return render(request, 'account/balance.html')
+
+@login_required
+def TicketsView(request):
+    ticketlist=tickets.objects.filter(user=(request.user))
+
+    context={'tickets': ticketlist}
+    return render(request, 'account/ticketslist.html', context=context)
+
+@login_required
+def BillingView(request):
+    tempticket=json.loads(request.session['tempticket'])
+    if tempticket['user']==str(request.user):
+        temp={'count': int(tempticket['count']), 'show':shows.objects.get(pk=uuid.UUID(tempticket['show'])), 'price':float(tempticket['price'])}
+        context=temp
+        context['total']=context['count']*context['price']
+        if context['total']>user.objects.filter(user=(request.user))[0].walletid.balance:
+            context['error']='Insufficient balance.'
+        else:
+            if request.method == 'POST':
+                form = BillingForm(request.POST)
+                if form.is_valid():
+                    return HttpResponseRedirect(reverse('profile'))
+            else:
+                form = BillingForm()
+            context['form']=form
+    return render(request, 'account/billing.html', context=context)
