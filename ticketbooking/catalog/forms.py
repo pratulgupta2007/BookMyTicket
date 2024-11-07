@@ -18,3 +18,10 @@ class BillingForm(forms.Form):
         widgets = {
             "any_field": HiddenInput(),
         }
+
+
+class ConfirmRefund(forms.Form):
+    class Meta:
+        widgets = {
+            "any_field": HiddenInput(),
+        }

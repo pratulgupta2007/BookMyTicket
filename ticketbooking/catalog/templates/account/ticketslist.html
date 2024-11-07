@@ -3,42 +3,46 @@
 {% block content %}
 
 <div style="margin-left:5%;margin-right:5%;">
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th scope="col">
-                    <h4>Movie</h4>
-                </th>
-                <th scope="col">
-                    <h4>Theater</h4>
-                </th>
-                <th scope="col">
-                    <h4>Date</h4>
-                </th>
-                <th scope="col">
-                    <h4>Time</h4>
-                </th>
-                <th scope="col">
-                    <h4>No.</h4>
-                </th>
-                <th scope="col">
-                    <h4>Total</h4>
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for ticket in tickets %}
-            <tr>
-                <td>{{ticket.show.get_moviename}}</td>
-                <td>{{ticket.show.get_theatername}}</td>
-                <td>{{ticket.show.get_date}}</td>
-                <td>{{ticket.show.get_time}}</td>
-                <td>{{ticket.count}}</td>
-                <td>&#x20b9;{{ticket.total}}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="container">
+        <hr>
+        {% for ticket in tickets %}
+        <div class="row" style="padding-bottom:10px;">
+            <div class="col">
+                <h5>Movie: {{ticket.show.get_moviename}} {{ticket.show.language}}-{{ticket.show.type}}</h5>
+            </div>
+            <div class="col">
+                <h5>Count: {{ticket.count}}</h5>
+            </div>
+            <div class="col">
+                <a class="btn btn-primary" type="submit" href="#">
+                    Add food
+                </a>
+            </div>
+
+        </div>
+        <div class="row" style="padding-bottom:10px;">
+            <div class="col">
+                <h5>Theater: {{ticket.show.get_theatername}}</h5>
+            </div>
+
+            <div class="col">
+                <h5>Total: &#x20b9;{{ticket.total}}</h5>
+            </div>
+            <div class="col">
+                <a class="btn btn-danger" type="submit" href="refund/{{ticket.ticketID}}">
+                    Refund
+                </a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <h5>Time: {{ticket.show.get_time}} on {{ticket.show.get_date}}</h5>
+            </div>
+
+        </div>
+
+        <hr>
+        {% endfor %}
+    </div>
 </div>
 {% endblock %}

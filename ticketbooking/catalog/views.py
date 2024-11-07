@@ -10,6 +10,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 import json
 import uuid
+from django.conf import settings
 
 # Create your views here.
 from .models import (
@@ -23,7 +24,7 @@ from .models import (
     tickets,
     OtpToken,
 )
-from .forms import TicketForm, BillingForm
+from .forms import TicketForm, BillingForm, ConfirmRefund
 
 
 def index(request):
@@ -158,7 +159,6 @@ def AddBalanceView(request):
 @login_required
 def TicketsView(request):
     ticketlist = tickets.objects.filter(user=(request.user)).filter(verified=True)
-
     context = {"tickets": ticketlist}
     return render(request, "account/ticketslist.html", context=context)
 
@@ -169,7 +169,7 @@ def BillingView(request):
     context = {}
     try:
         tempticket = json.loads(request.session["tempticket"])
-        request.session["tempticket"] = ""
+
         if tempticket["user"] == str(request.user):
             temp = {
                 "count": int(tempticket["count"]),
@@ -182,13 +182,11 @@ def BillingView(request):
                 context["total"]
                 > user.objects.filter(user=(request.user))[0].walletid.balance
             ):
-                context["error"] = "Insufficient balance."
+                error = "Insufficient balance."
             else:
                 if request.method == "POST":
                     form = BillingForm(request.POST)
                     if form.is_valid():
-                        print(request.POST)
-
                         unverified_tr = transactions.objects.create(
                             sendingID=user.objects.filter(user=(request.user))[
                                 0
@@ -207,7 +205,7 @@ def BillingView(request):
                         request.session["toverify"] = "ticket%" + str(
                             unverified_ticket.ticketID
                         )
-
+                        request.session["tempticket"] = ""
                         return redirect("verification")
                 else:
                     form = BillingForm()
@@ -275,7 +273,7 @@ def VerificationView(request):
                                 http://127.0.0.1:8000/accounts/verification/
                                 
                                 """
-            sender = "clintonmatics@gmail.com"
+            sender = settings.EMAIL_HOST_USER
             receiver = [
                 User.email,
             ]
@@ -302,12 +300,12 @@ def resend_otp(request):
 
         subject = "Email Verification"
         message = f"""
-                            Hi {user.username}, here is your OTP {otp.otp_code} 
+                            Hi {request.user.username}, here is your OTP {otp.otp_code} 
                             it expires in 5 minute, use the url below to redirect back to the website
                             http://127.0.0.1:8000/accounts/verification/
                             
                             """
-        sender = "clintonmatics@gmail.com"
+        sender = settings.EMAIL_HOST_USER
         receiver = [
             user.email,
         ]
@@ -323,3 +321,17 @@ def resend_otp(request):
         return redirect("verification")
 
     return render(request, "account/resend_otp.html")
+
+
+@login_required
+def RefundView(request, ticket):
+    context = {}
+    if request.method == "POST":
+        form = ConfirmRefund(request.POST)
+        if form.is_valid():
+            ticket = tickets.objects.get(pk=ticket)
+            ticket.revertticket()
+            return HttpResponseRedirect(reverse("ticketslist"))
+    else:
+        form = TicketForm()
+    return render(request, "account/refund.html")

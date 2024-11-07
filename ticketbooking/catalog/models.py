@@ -4,7 +4,7 @@ import uuid
 from django.http import HttpRequest
 from django.conf import settings
 import secrets
-import datetime
+from django.utils import timezone
 
 from django.contrib.auth import get_user_model
 
@@ -162,7 +162,7 @@ class tickets(models.Model):
     verified = models.BooleanField(default=0)
 
     def revertticket(self):
-        if self.show.date_time > datetime.datetime.now():
+        if self.show.date_time > timezone.now():
             self.transaction.status = "R"
             self.transaction.save()
 
@@ -174,6 +174,8 @@ class tickets(models.Model):
 
             self.transaction.receivingID.balance += self.total
             self.transaction.receivingID.save()
+
+            self.delete()
 
             return True
 
@@ -191,3 +193,10 @@ class OtpToken(models.Model):
 
     def __str__(self):
         return self.user.username
+
+
+class foodorder(models.Model):
+    orderID = models.UUIDField(default=uuid.uuid4, primary_key=True)
+    ticket = models.ForeignKey(tickets, on_delete=models.CASCADE)
+    food = models.ForeignKey(foods, on_delete=models.CASCADE)
+    count = models.IntegerField(default=1)

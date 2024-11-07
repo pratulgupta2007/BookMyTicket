@@ -52,12 +52,6 @@
               </a>
             </li>
 
-            <li class="nav-item">
-              <a class="nav-link text-white">&#8377;{{balance}}</a>
-            </li>
-
-
-
             {% else %}
             <li class="nav-item">
               <a class="nav-link text-white" href="{% url 'account_login' %}?next={{ request.path }}">Login</a>

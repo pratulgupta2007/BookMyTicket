@@ -14,25 +14,35 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
 from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
-from catalog.views import ProfileView, AddBalanceView, TicketsView, BillingView, VerificationView, resend_otp
+from catalog.views import (
+    ProfileView,
+    AddBalanceView,
+    TicketsView,
+    BillingView,
+    VerificationView,
+    resend_otp,
+    RefundView,
+)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('bookmyticket/', include('catalog.urls')),
-    path('', RedirectView.as_view(url='bookmyticket/', permanent=True)),
-    path('accounts/', include('allauth.urls')),
-    path('accounts/profile', ProfileView, name='profile'),
-    path('accounts/balance', AddBalanceView, name='balanceview'),
-    path('accounts/tickets', TicketsView, name='ticketslist'),
-    path('accounts/billing', BillingView, name='billing'),
-    path('accounts/verification', VerificationView, name='verification'),
+    path("admin/", admin.site.urls),
+    path("bookmyticket/", include("catalog.urls")),
+    path("", RedirectView.as_view(url="bookmyticket/", permanent=True)),
+    path("accounts/", include("allauth.urls")),
+    path("accounts/profile", ProfileView, name="profile"),
+    path("accounts/balance", AddBalanceView, name="balanceview"),
+    path("accounts/tickets", TicketsView, name="ticketslist"),
+    path("accounts/billing", BillingView, name="billing"),
+    path("accounts/verification", VerificationView, name="verification"),
     path("accounts/resend-otp", resend_otp, name="resend-otp"),
-    path('logout', LogoutView.as_view()),
-] 
+    path("accounts/refund/<uuid:ticket>", RefundView, name="refund"),
+    path("logout", LogoutView.as_view()),
+]
 urlpatterns.extend(static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))
