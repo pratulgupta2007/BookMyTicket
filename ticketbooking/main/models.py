@@ -200,3 +200,12 @@ class foodorder(models.Model):
     ticket = models.ForeignKey(tickets, on_delete=models.CASCADE)
     food = models.ForeignKey(foods, on_delete=models.CASCADE)
     count = models.IntegerField(default=1)
+    status = models.CharField(
+        max_length=1,
+        choices={"I": "Incomplete", "C": "Completed"},
+        default="I",
+    )
+    transaction = models.ForeignKey(transactions, on_delete=models.CASCADE, null=True)
+
+    def total(self):
+        return self.count * self.food.price

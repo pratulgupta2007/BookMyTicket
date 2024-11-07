@@ -21,7 +21,7 @@ from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
-from catalog.views import (
+from main.views import (
     ProfileView,
     AddBalanceView,
     TicketsView,
@@ -29,11 +29,15 @@ from catalog.views import (
     VerificationView,
     resend_otp,
     RefundView,
+    FoodView,
+    GenOrder,
+    AddReduceOrder,
+    TransactionsView,
 )
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("bookmyticket/", include("catalog.urls")),
+    path("bookmyticket/", include("main.urls")),
     path("", RedirectView.as_view(url="bookmyticket/", permanent=True)),
     path("accounts/", include("allauth.urls")),
     path("accounts/profile", ProfileView, name="profile"),
@@ -43,6 +47,14 @@ urlpatterns = [
     path("accounts/verification", VerificationView, name="verification"),
     path("accounts/resend-otp", resend_otp, name="resend-otp"),
     path("accounts/refund/<uuid:ticket>", RefundView, name="refund"),
+    path("accounts/food/<uuid:ticket>", FoodView, name="food"),
+    path("accounts/food/<uuid:ticket>/<uuid:item>", GenOrder, name="genorder"),
+    path(
+        "accounts/food/<uuid:ticket>/<uuid:order>/<str:operation>",
+        AddReduceOrder,
+        name="addreduceorder",
+    ),
+    path("accounts/transactions", TransactionsView, name="transactions"),
     path("logout", LogoutView.as_view()),
 ]
 urlpatterns.extend(static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))

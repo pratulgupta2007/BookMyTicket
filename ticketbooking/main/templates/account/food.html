@@ -1,0 +1,74 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<div style="margin-left:5%;margin-right:5%;">
+    <h4>Food and Beverages</h4>
+    {% if orders %}
+    <div class="container">
+        {% for order in orders %}
+        <div class="row">
+            <div class="col">
+                {{order.food.itemname}}
+            </div>
+            <div class="col">
+                {{order.food.price}}
+            </div>
+            <div class="col">
+                {{order.count}}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    No food or beverages ordered yet.
+    {% endif %}
+    <hr>
+    <h4>Cart</h4>
+    {% if cart %}
+    <div class="container">
+        {% for food in cart %}
+        <div class="row" style="padding-bottom:10px;">
+            <div class="col">
+                {{food.food.itemname}}
+            </div>
+            <div class="col">
+                <a class="btn btn-primary" href="{{ticket.ticketID}}/{{food.orderID}}/reduce">-</a>
+                &#x20b9;{{food.total}}
+                <a class="btn btn-primary" href="{{ticket.ticketID}}/{{food.orderID}}/add">+</a>
+            </div>
+            <div class="col">
+                <a class="btn btn-danger" href="{{ticket.ticketID}}/{{food.orderID}}/delete">Remove</a>
+            </div>
+        </div>
+        {% endfor %}
+        <form method="post" style="margin-top:10px;">
+            {% csrf_token %}
+            {{form}}
+            <center><button type="submit" class="btn btn-primary">Confirm</button></center>
+        </form>
+    </div>
+    {% else %}
+    Empty cart
+    {% endif %}
+    <hr>
+    <h4>Place an order</h4>
+    <div class="container">
+        {% for food in foods %}
+        <div class="row" style="padding-bottom:10px;">
+            <div class="col">
+                {{food.itemname}}
+            </div>
+            <div class="col">
+                &#x20b9;{{food.price}}
+            </div>
+            <div class="col">
+                <a class="btn btn-primary" href="{{ticket.ticketID}}/{{food.foodID}}">Add</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

@@ -23,6 +23,7 @@ from .models import (
     movies,
     tickets,
     OtpToken,
+    foodorder,
 )
 from .forms import TicketForm, BillingForm, ConfirmRefund
 
@@ -254,6 +255,38 @@ def VerificationView(request):
                         request.session["toverify"] = ""
 
                         return redirect("ticketslist")
+
+                    elif verifyobj[0] == "food":
+                        t = tickets.objects.get(pk=uuid.UUID(verifyobj[1]))
+                        orders = foodorder.objects.filter(ticket=t).filter(status="I")
+                        total = 0
+                        userobj = user.objects.filter(user=(t.user))[0]
+                        adminobj = t.show.adminID
+
+                        for order in orders:
+                            order.status = "C"
+                            total += order.total()
+                            order.transaction = transactions.objects.create(
+                                sendingID=userobj.walletid,
+                                receivingID=adminobj.walletid,
+                                amount=order.total(),
+                                status="C",
+                            )
+                            order.save()
+
+                        t.total += total
+                        t.save()
+
+                        userobj.walletid.balance = userobj.walletid.balance - total
+                        userobj.walletid.save()
+                        adminobj.walletid.balance = adminobj.walletid.balance + total
+                        adminobj.walletid.save()
+
+                        user_otp.delete()
+                        request.session["toverify"] = ""
+                        return HttpResponseRedirect(
+                            reverse("food", args=(str(t.ticketID),))
+                        )
                 else:
                     context["error"] = "The OTP has expired, get a new OTP!"
                     return redirect("verification")
@@ -335,3 +368,69 @@ def RefundView(request, ticket):
     else:
         form = TicketForm()
     return render(request, "account/refund.html")
+
+
+def FoodView(request, ticket):
+    ticket = tickets.objects.get(pk=ticket)
+    context = {}
+    if request.method == "POST":
+        form = BillingForm(request.POST)
+        if form.is_valid():
+            if ticket.show.date_time > timezone.now():
+                request.session["toverify"] = "food%" + str(ticket.ticketID)
+                return redirect("verification")
+    else:
+        form = BillingForm()
+    context["form"] = form
+    context["orders"] = foodorder.objects.filter(ticket=ticket).filter(status="C")
+    context["cart"] = foodorder.objects.filter(ticket=ticket).filter(status="I")
+    context["foods"] = foods.objects.filter(adminID=ticket.show.adminID)
+    context["ticket"] = ticket
+    return render(request, "account/food.html", context=context)
+
+
+def GenOrder(request, ticket, item):
+    ticket = tickets.objects.get(pk=ticket)
+    item = foods.objects.get(pk=item)
+    try:
+        order, created = foodorder.objects.get_or_create(ticket=ticket, food=item)
+        if order.status == "C":
+            neworder = foodorder.objects.create(ticket=ticket, food=item)
+        order.save()
+        return HttpResponseRedirect(reverse("food", args=(str(ticket.ticketID),)))
+    except:
+        pass
+    return render(request, "account/genorder.html")
+
+
+def AddReduceOrder(request, ticket, order, operation):
+    ticket = tickets.objects.get(pk=ticket)
+    order = foodorder.objects.get(pk=order)
+    try:
+        if operation == "add":
+            order.count += 1
+            order.save()
+            return HttpResponseRedirect(reverse("food", args=(str(ticket.ticketID),)))
+        elif operation == "reduce":
+            if order.count == 1:
+                order.delete()
+                return HttpResponseRedirect(
+                    reverse("food", args=(str(ticket.ticketID),))
+                )
+            else:
+                order.count -= 1
+                order.save()
+                return HttpResponseRedirect(
+                    reverse("food", args=(str(ticket.ticketID),))
+                )
+        elif operation == "delete":
+            order.delete()
+            return HttpResponseRedirect(reverse("food", args=(str(ticket.ticketID),)))
+    except:
+        pass
+    return render(request, "account/genorder.html")
+
+
+@login_required
+def TransactionsView(request):
+    return render(request, "account/transactions.html")

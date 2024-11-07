@@ -3,6 +3,9 @@
 {% block content %}
 
 <div style="margin-left:5%;margin-right:5%;">
+    <center>
+        <h4>Tickets</h4>
+    </center>
     <div class="container">
         <hr>
         {% for ticket in tickets %}
@@ -14,8 +17,8 @@
                 <h5>Count: {{ticket.count}}</h5>
             </div>
             <div class="col">
-                <a class="btn btn-primary" type="submit" href="#">
-                    Add food
+                <a class="btn btn-primary" type="submit" href="food/{{ticket.ticketID}}">
+                    Pre-order food
                 </a>
             </div>
 
