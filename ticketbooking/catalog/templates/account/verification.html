@@ -1,0 +1,25 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div style="margin-left:5%;margin-right:5%;">
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{error}}
+    </div>
+    {% else %}
+    <form action="" method='POST'>
+        {% csrf_token %}
+        <h3><strong>Verify</strong></h3>
+        <div class="mb-3">
+            <label class="form-label">OTP</label>
+            <input class="form-control" name="otp_code" placeholder="Enter OTP">
+        </div>
+
+        <button class="btn btn-primary" style="width:100%">Confirm Payment</button>
+        <p>Need a new OTP? <a href="{% url 'verification' %}">Resend OTP</a></p>
+
+    </form>
+
+    {% endif %}
+</div>
+{% endblock %}

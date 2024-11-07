@@ -3,29 +3,42 @@
 {% block content %}
 
 <div style="margin-left:5%;margin-right:5%;">
-<table class="table table-hover">
-    <thead>
-        <tr>
-            <th scope="col"><h4>Movie</h4></th>
-            <th scope="col"><h4>Theater</h4></th>
-            <th scope="col"><h4>Date</h4></th>
-            <th scope="col"><h4>Time</h4></th>
-            <th scope="col"><h4>No. of Tickets</h4></th>
-            <th scope="col"><h4>Total</h4></th>
-        </tr>
-    </thead>
-    <tbody>
-{% for ticket in tickets %}
-    <tr>
-        <td>{{ticket.show.get_moviename}}</td>
-        <td>{{ticket.show.get_theatername}}</td>
-        <td>{{ticket.show.get_date}}</td> 
-        <td>{{ticket.show.get_time}}</td> 
-        <td>{{ticket.count}}</td> 
-        <td>&#x20b9;{{ticket.total}}</td>
-    </tr>
-{% endfor %}
-</tbody>
-</table>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">
+                    <h4>Movie</h4>
+                </th>
+                <th scope="col">
+                    <h4>Theater</h4>
+                </th>
+                <th scope="col">
+                    <h4>Date</h4>
+                </th>
+                <th scope="col">
+                    <h4>Time</h4>
+                </th>
+                <th scope="col">
+                    <h4>No.</h4>
+                </th>
+                <th scope="col">
+                    <h4>Total</h4>
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in tickets %}
+            <tr>
+                <td>{{ticket.show.get_moviename}}</td>
+                <td>{{ticket.show.get_theatername}}</td>
+                <td>{{ticket.show.get_date}}</td>
+                <td>{{ticket.show.get_time}}</td>
+                <td>{{ticket.count}}</td>
+                <td>&#x20b9;{{ticket.total}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}

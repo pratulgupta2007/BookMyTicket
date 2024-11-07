@@ -1,53 +1,62 @@
-{% extends "base_generic.html" %}\
+{% extends "base_generic.html" %}
 
 {% block content %}
 <div style="margin-left:5%;margin-right:5%;">
     <h4>Billing</h4>
-    {% if count %}
-        
-        <h6>{{show.get_moviename}} | {{show.get_theatername}}</h6>
-        {{show.language}} {{show.type}}</br>
-        {{show.get_time}} on {{show.get_date}}</br></br>
-        <div class="container">
-                <table class="table">
-                    
-                    <thead class="thead-dark">
-                        <tr>
-                            <th scope="col"><h6></h6></th>
-                            <th scope="col"><h6>Price</h6></th>
-                            <th scope="col"><h6>Count</h6></th>
-                        </tr>
-                    </thead>
-                    
-                    <tbody>
-                        <tr>
-                            <td>Ticket:</td>
-                            <td>&#x20b9;{{price}}</td>
-                            <td>{{count}}</td>
-                        </tr>
-                        <tr>
-                            <td>Total Amount:</td>
-                            <td></td>
-                            <td>{{total}}</td>
-                        </tr>
-                        </h5>
-                    </tbody>
-                </table>
-                {% if error %}
-                    <div class="alert alert-danger" role="alert">
-                        {{error}}
-                    </div>
-                {% endif %}
-                <form method="post">
-                    {% csrf_token %}
-                    {{form}}
-                    <center><button type="submit" class="btn btn-primary col-4">Confirm</button></center>
-                </form>
-                
-        </div>            
+
+    {% if error %}
+    <div class="alert alert-danger" role="alert">
+        {{error}}
+    </div>
     {% else %}
-      <p>Wrong user.</p>
+
+    <h6>{{show.get_moviename}} | {{show.get_theatername}}</h6>
+    {{show.language}} {{show.type}}</br>
+    {{show.get_time}} on {{show.get_date}}</br></br>
+    <div class="container">
+        <table class="table">
+
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col">
+                        <h6></h6>
+                    </th>
+                    <th scope="col">
+                        <h6>Price</h6>
+                    </th>
+                    <th scope="col">
+                        <h6>Count</h6>
+                    </th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>Ticket:</td>
+                    <td>&#x20b9;{{price}}</td>
+                    <td>{{count}}</td>
+                </tr>
+                <tr>
+                    <td>Total Amount:</td>
+                    <td></td>
+                    <td>{{total}}</td>
+                </tr>
+                </h5>
+            </tbody>
+        </table>
+        {% if error %}
+        <div class="alert alert-danger" role="alert">
+            {{error}}
+        </div>
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            {{form}}
+            <center><button type="submit" class="btn btn-primary col-4">Confirm</button></center>
+        </form>
+
+    </div>
     {% endif %}
-    
+
 </div>
 {% endblock %}

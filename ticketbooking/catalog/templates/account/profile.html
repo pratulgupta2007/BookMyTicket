@@ -3,19 +3,24 @@
 {% block content %}
 
 <center>
-    <h2>Hi, 
+    <h2>Hi,
         {% if user.first_name %}
-                {{ user.first_name}} {{user.last_name}}
-                {% else %}
-                Guest{% endif %}!</h2>
+        {{ user.first_name}} {{user.last_name}}
+        {% else %}
+        Guest{% endif %}!</h2>
 </center>
 
+
+
+
 <div style="max-width:70%;margin-left:15%;margin-right:15%;">
-    
+
     <table class="table">
         <tbody>
             <tr>
-                <td><h5>Details</h5></td>
+                <td>
+                    <h5>Details</h5>
+                </td>
                 <td></td>
                 <td></td>
             </tr>
@@ -28,9 +33,9 @@
                 <td>Email:</td>
                 <td>
                     {% if user.email %}
-                        {{user.email}}
+                    {{user.email}}
                     {% else %}
-                        Email not added.
+                    Email not added.
                     {% endif %}
                 </td>
                 <td>
@@ -57,7 +62,9 @@
                 </td>
             </tr>
             <tr>
-                <td><h5>Bookings</h5></td>
+                <td>
+                    <h5>Bookings</h5>
+                </td>
                 <td></td>
                 <td></td>
             </tr>
@@ -76,6 +83,12 @@
             </tr>
         </tbody>
     </table>
+    <center>
+        <form id="logout-form" method="post" action="{% url 'account_logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger col-3">Logout</button>
+        </form>
+    </center>
 </div>
 
 {% endblock %}

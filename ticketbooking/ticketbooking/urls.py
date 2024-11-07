@@ -20,7 +20,7 @@ from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
-from catalog.views import ProfileView, AddBalanceView, TicketsView, BillingView
+from catalog.views import ProfileView, AddBalanceView, TicketsView, BillingView, VerificationView, resend_otp
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,6 +31,8 @@ urlpatterns = [
     path('accounts/balance', AddBalanceView, name='balanceview'),
     path('accounts/tickets', TicketsView, name='ticketslist'),
     path('accounts/billing', BillingView, name='billing'),
+    path('accounts/verification', VerificationView, name='verification'),
+    path("accounts/resend-otp", resend_otp, name="resend-otp"),
     path('logout', LogoutView.as_view()),
 ] 
 urlpatterns.extend(static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))

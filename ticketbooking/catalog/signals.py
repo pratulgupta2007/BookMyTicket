@@ -4,8 +4,8 @@ import uuid
 from .models import User, user, wallet
 
 
-@receiver(post_save, sender=User, dispatch_uid='user.create_user_profile')
+@receiver(post_save, sender=User, dispatch_uid="user.create_user_profile")
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
-        n=wallet.objects.create()
+        n = wallet.objects.create()
         user.objects.create(user=instance, walletid=n)
