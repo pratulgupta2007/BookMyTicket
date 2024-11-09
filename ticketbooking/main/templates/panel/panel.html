@@ -1,0 +1,9 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+<div style="margin-left:5%;margin-right:5%;">
+    <h3>{{theater}}</h3>
+    <h5>Balance: &#x20b9;{{theater.walletid.balance}}</h5>
+    <center><a type="submit" class="btn btn-danger" href="{% url 'admin_logout' %}">Logout</a></center>
+</div>
+{% endblock %}

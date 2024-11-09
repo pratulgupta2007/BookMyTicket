@@ -1,0 +1,32 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+<div style="margin-left:5%;margin-right:5%;">
+    <h4>Foods:</h4>
+    <center><a href="{% url 'newfood' %}" class="btn btn-primary">Add Food</a> </center>
+    <hr>
+    <center>
+        {% for food in foods %}
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <strong>Item name:</strong> {{food.itemname}}
+                </div>
+                <div class="col">
+                    <a class="btn btn-primary col-3" href="/panel/foods/edit/{{food.foodID}}" type="submit">Edit</a>
+                </div>
+            </div>
+            <div class="row" style="margin-top:10px;">
+                <div class="col">
+                    <strong>Price:</strong> &#x20b9;{{food.price}}
+                </div>
+                <div class="col">
+                    <a class="btn btn-danger col-3" href="/panel/foods/delete/{{food.foodID}}" type="submit">Delete</a>
+                </div>
+            </div>
+        </div>
+        <hr>
+        {% endfor %}
+    </center>
+</div>
+{% endblock %}

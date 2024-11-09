@@ -5,6 +5,8 @@ from django.http import HttpRequest
 from django.conf import settings
 import secrets
 from django.utils import timezone
+import datetime
+import pytz
 
 from django.contrib.auth import get_user_model
 
@@ -45,8 +47,9 @@ class user(models.Model):
 
 class adminuser(models.Model):
     aid = models.UUIDField(default=uuid.uuid4, primary_key=True)
-    password = models.CharField(max_length=200)
-    verification_email = models.EmailField()
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True
+    )
     walletid = models.ForeignKey(wallet, on_delete=models.CASCADE)
 
     # Theater related information
@@ -56,6 +59,9 @@ class adminuser(models.Model):
     theater_phone = models.CharField(max_length=13)
     theater_email = models.EmailField()
     revenue = models.DecimalField(max_digits=20, decimal_places=2)
+
+    class Meta:
+        permissions = (("theateradmin", "User is theater admin"),)
 
     def __str__(self):
         return self.theater_name
@@ -113,6 +119,12 @@ class shows(models.Model):
             + str(self.date_time.date())
         )
 
+    def get_absolute_datetime(self):
+        nowtz = datetime.datetime.now(pytz.timezone("Asia/Kolkata"))
+        seconds = nowtz.utcoffset().total_seconds()
+        x = datetime.timedelta(seconds=seconds)
+        return self.date_time + x
+
     def get_absolute_url(self):
         return reverse("show-detail", args=[str(self.showID)])
 
@@ -123,10 +135,16 @@ class shows(models.Model):
         return self.adminID
 
     def get_date(self):
-        return self.date_time.date()
+        return self.get_absolute_datetime().date()
+
+    def get_date_str(self):
+        return self.get_date().strftime("%Y-%m-%d")
 
     def get_time(self):
-        return self.date_time.time()
+        return self.get_absolute_datetime().time()
+
+    def get_time_str(self):
+        return self.get_time().strftime("%H:%M")
 
     def availableseats(self):
         return self.seats - self.seats_booked
@@ -135,16 +153,13 @@ class shows(models.Model):
 class foods(models.Model):
     foodID = models.UUIDField(default=uuid.uuid4, primary_key=True)
     adminID = models.ForeignKey(adminuser, on_delete=models.CASCADE)
-    itemname = models.CharField(
-        max_length=255, help_text="Enter item name: ", unique=True
-    )
+    itemname = models.CharField(max_length=255, help_text="Enter item name: ")
     price = models.DecimalField(
         max_digits=5, decimal_places=2, help_text="Enter item price: "
     )
-    availibilty = models.BooleanField()
 
     def __str__(self):
-        return self.itemname
+        return self.itemname + " | " + self.adminID.theater_name
 
     def get_absolute_url(self):
         return reverse("show", args=[str(self.foodID)])

@@ -1,0 +1,24 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+
+<div style="margin-left:5%;margin-right:5%;">
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-danger" role="alert">
+        {{message.tags}}
+    </div>
+    {% endfor %}
+    {% else %}
+    <center>
+        <h4>Confirm show cancellation</h4>
+        <form method="post">
+            {% csrf_token %}
+            {{form}}
+            <button type="submit" class="btn btn-primary col-4">Confirm</button>
+        </form>
+    </center>
+    {% endif %}
+</div>
+
+{% endblock %}

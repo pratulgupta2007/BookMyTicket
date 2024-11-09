@@ -1,0 +1,21 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+
+<div style="margin-left:5%;margin-right:5%;">
+    <h4>New food</h4>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="id_itemname">Itemname:</label>
+            <input type="text" name="itemname" required id="id_itemname" class="form-control">
+        </div>
+        <div>
+            <label for="id_price">Price:</label>
+            <input type="number" name="price" step="0.01" required id="id_price" class="form-control">
+        </div>
+        <center><button type="submit" class="btn btn-primary col-4" style="margin-top:10px;">Save</button></center>
+    </form>
+</div>
+
+{% endblock %}

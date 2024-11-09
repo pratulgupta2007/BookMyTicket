@@ -1,0 +1,16 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+
+<div style="margin-left:5%;margin-right:5%;">
+    <center>
+        <h4>Confirm food item deletion</h4>
+        <form method="post">
+            {% csrf_token %}
+            {{form}}
+            <button type="submit" class="btn btn-primary col-4">Confirm</button>
+        </form>
+    </center>
+</div>
+
+{% endblock %}

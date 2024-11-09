@@ -21,7 +21,20 @@ from django.views.generic import RedirectView
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import LogoutView
-from main.views import (
+from main.panel_views import (
+    panel,
+    adminlogin,
+    adminlogout,
+    adminfoods,
+    editfood,
+    newfood,
+    refundfood,
+    adminshows,
+    editshow,
+    newshow,
+    refundshow,
+)
+from main.accounts_views import (
     ProfileView,
     AddBalanceView,
     TicketsView,
@@ -56,5 +69,16 @@ urlpatterns = [
     ),
     path("accounts/transactions", TransactionsView, name="transactions"),
     path("logout", LogoutView.as_view()),
+    path("panel", panel, name="panel"),
+    path("panel/login", adminlogin, name="admin_login"),
+    path("panel/logout", adminlogout, name="admin_logout"),
+    path("panel/foods", adminfoods, name="admin_foods"),
+    path("panel/foods/new", newfood, name="newfood"),
+    path("panel/foods/edit/<uuid:foodID>", editfood, name="editfood"),
+    path("panel/foods/delete/<uuid:foodID>", refundfood, name="refundfood"),
+    path("panel/shows", adminshows, name="admin_shows"),
+    path("panel/shows/new", newshow, name="newshow"),
+    path("panel/shows/edit/<uuid:showID>", editshow, name="editshow"),
+    path("panel/shows/delete/<uuid:showID>", refundshow, name="refundshow"),
 ]
 urlpatterns.extend(static(settings.STATIC_URL, document_root=settings.STATIC_ROOT))

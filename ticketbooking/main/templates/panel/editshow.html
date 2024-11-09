@@ -1,0 +1,68 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+<div style="margin-left:5%;margin-right:5%;">
+    <h4>Edit show</h4>
+    {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-danger" role="alert">
+        {{message.tags}}
+    </div>
+    {% endfor %}
+    {% else %}
+    <hr>
+    <form method="post">
+        {% csrf_token %}
+        <div>
+            <label for="id_movie">Movie:</label>
+            <select name="movie" id="id_movie" class="form-select">
+                {% for movie in movies %}
+                <option value="{{movie.movie}}">{{movie.movie}}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div>
+            <label for="id_date">Date:</label>
+            <input class="form-control" type="date" name="date" required id="id_date" value="{{show.get_date_str}}">
+        </div>
+
+        <div>
+            <label for="id_time">Time:</label>
+            <input class="form-control" type="time" name="time" required id="id_time" value="{{show.get_time_str}}">
+        </div>
+
+        <div>
+            <label for="id_seats">Seats:</label>
+            <input class="form-control" type="number" name="seats" min="1" required id="id_seats"
+                value="{{show.seats}}">
+        </div>
+
+        <div>
+            <label for="id_date">Price:</label>
+            <input class="form-control" type="number" name="price" step="0.01" required id="id_price"
+                value="{{show.price}}">
+        </div>
+
+        <div>
+            <label for="id_date">Type:</label>
+            <input class="form-control" type="text" name="type" maxlength="20" required id="id_type"
+                value="{{show.type}}">
+        </div>
+
+        <div>
+            <label for="id_language">Language:</label>
+            <input class="form-control" type="text" name="language" maxlength="20" required id="id_language"
+                value="{{show.language}}">
+        </div>
+        <center><button style="margin-top:10px;" type="submit" class="btn btn-primary col-3">Save</button></center>
+        {% if form.errors %}
+        <div class="alert alert-danger" role="alert">
+            {{form.errors}}
+        </div>
+        {% endif %}
+    </form>
+    {% endif %}
+
+</div>
+{% endblock %}

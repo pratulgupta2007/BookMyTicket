@@ -1,0 +1,48 @@
+{% extends "base_admin.html" %}
+
+{% block content %}
+<div style="margin-left:5%;margin-right:5%;">
+    <h4>Shows:</h4>
+    <center><a href="{% url 'newshow' %}" class="btn btn-primary">Add Show</a> </center>
+    <hr>
+    <center>
+        {% for show in shows %}
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <strong>Movie:</strong> {{show.movie.movie}}
+                    &emsp;{{show.language}}-{{show.type}}
+                </div>
+                <div class="col">
+                    <a class="btn btn-primary col-3" href="{{show.get_absolute_url}}" type="submit">View on
+                        site</a>
+                </div>
+            </div>
+            <div class="row" style="margin-top:10px;">
+                <div class="col">
+                    <strong>Date:</strong> {{show.get_date}}
+                    &emsp;
+                    <strong>Time:</strong> {{show.get_time}}
+                    &emsp;&emsp;&emsp;&emsp;
+                    <strong>Price:</strong> &#x20b9;{{show.price}}
+                </div>
+                <div class="col">
+                    <a class="btn btn-primary col-3" href="/panel/shows/edit/{{show.showID}}" type="submit">Edit</a>
+                </div>
+            </div>
+            <div class="row" style="margin-top:10px;">
+                <div class="col">
+                    <strong>Seats:</strong> {{show.seats}}
+                    &emsp;
+                    <strong>Booked:</strong> {{show.seats_booked}}
+                </div>
+                <div class="col">
+                    <a class="btn btn-danger col-3" href="/panel/shows/delete/{{show.showID}}" type="submit">Delete</a>
+                </div>
+            </div>
+        </div>
+        <hr>
+        {% endfor %}
+    </center>
+</div>
+{% endblock %}
