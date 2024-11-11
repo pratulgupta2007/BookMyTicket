@@ -50,7 +50,7 @@ from main.accounts_views import (
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("bookmyticket/", include("main.urls")),
+    path("", include("main.urls")),
     path("", RedirectView.as_view(url="bookmyticket/", permanent=True)),
     path("accounts/", include("allauth.urls")),
     path("accounts/profile", ProfileView, name="profile"),
