@@ -1,6 +1,16 @@
 from django.contrib import admin
 
-from .models import wallet, transactions, adminuser, foods, shows, movies, user, tickets, OtpToken
+from .models import (
+    wallet,
+    transactions,
+    adminuser,
+    foods,
+    shows,
+    movies,
+    user,
+    tickets,
+    OtpToken,
+)
 
 admin.site.register(wallet)
 admin.site.register(transactions)

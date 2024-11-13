@@ -23,15 +23,21 @@ from .forms import TicketForm
 def index(request):
 
     movielist = movies.objects.order_by("movie").values_list("movie").distinct()
-    ls = random.sample(range(0, len(movielist)), 3)
+    try:
+        ls = random.sample(range(0, len(movielist)), 3)
 
-    context = {
-        "show1": movielist[ls[0]][0],
-        "show2": movielist[ls[1]][0],
-        "show3": movielist[ls[2]][0],
-        "num_theaters": adminuser.objects.all().count(),
-        "num_foods": foods.objects.count(),
-    }
+        context = {
+            "show1": movielist[ls[0]][0],
+            "show2": movielist[ls[1]][0],
+            "show3": movielist[ls[2]][0],
+            "num_theaters": adminuser.objects.all().count(),
+            "num_foods": foods.objects.count(),
+        }
+    except:
+        context = {
+            "num_theaters": adminuser.objects.all().count(),
+            "num_foods": foods.objects.count(),
+        }
     if request.user.is_authenticated:
         try:
             context["balance"] = user.objects.filter(user=(request.user))[

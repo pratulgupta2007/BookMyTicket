@@ -9,6 +9,7 @@ from django.conf import settings
 import json
 import uuid
 
+
 # Create your views here.
 from .models import (
     wallet,
