@@ -1,7 +1,11 @@
 services:
   web:
     build: ./ticketbooking
-    command: python manage.py runserver 0.0.0.0:8000
+    command: /bin/bash -c "
+                    export MIGRATE=0 &&
+                    python manage.py migrate &&
+                    export MIGRATE=1 &&
+                    python manage.py runserver 0.0.0.0:8000"
     volumes:
       - ./ticketbooking:/usr/src/ticketbooking/
     ports:

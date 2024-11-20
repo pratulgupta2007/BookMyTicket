@@ -280,12 +280,10 @@ def GenOrder(request, ticket, item):
     ticket = tickets.objects.get(pk=ticket)
     item = foods.objects.get(pk=item)
     try:
-        order, created = foodorder.objects.get_or_create(ticket=ticket, food=item)
-        if order.status == "C":
-            neworder = foodorder.objects.create(ticket=ticket, food=item)
-        order.save()
+        order = foodorder.objects.create(ticket=ticket, food=item)
         return HttpResponseRedirect(reverse("food", args=(str(ticket.ticketID),)))
-    except:
+    except Exception as e:
+        print(e)
         pass
     return render(request, "account/genorder.html")
 

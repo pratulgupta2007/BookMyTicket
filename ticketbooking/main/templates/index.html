@@ -2,16 +2,30 @@
 
 {% block content %}
 
-<h1><center>HOME</center></h1>
-  <h2><center>Welcome to BookMyTicket</center></h2>
-  <div style="margin-left:50px;margin-top:5px">
-    <p>
-      <strong>Movies:</strong>
-      <li>{{ show1 }}</li>
-      <li>{{ show2 }}</li>
-      <li>{{ show3 }}</li>
-    </p>
-      <p><strong>Theaters:</strong> {{ num_theaters }}</p>
-      <p><strong>Food and Beverages:</strong> {{ num_food }}</p>
-    </div>  
+<div class="text-center my-12">
+  <h1 class="text-5xl font-extrabold text-blue-600">HOME</h1>
+  <h2 class="text-3xl mt-4 text-gray-800">Welcome to BookMyTicket</h2>
+</div>
+
+<div class="container mx-auto px-4">
+  <div class="bg-white shadow-lg rounded-lg p-8">
+    <div class="mb-8">
+      <h3 class="text-2xl font-bold text-blue-600 mb-4">Movies:</h3>
+      <ul class="list-disc list-inside ml-6 text-gray-800 space-y-2">
+        <li>{{ show1 }}</li>
+        <li>{{ show2 }}</li>
+        <li>{{ show3 }}</li>
+      </ul>
+    </div>
+    <div class="mb-8">
+      <h3 class="text-2xl font-bold text-blue-600 mb-4">Theaters:</h3>
+      <p class="text-gray-800">{{ num_theaters }}</p>
+    </div>
+    <div>
+      <h3 class="text-2xl font-bold text-blue-600 mb-4">Food and Beverages:</h3>
+      <p class="text-gray-800">{{ num_food }}</p>
+    </div>
+  </div>
+</div>
+
 {% endblock %}

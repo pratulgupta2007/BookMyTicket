@@ -1,32 +1,30 @@
 {% extends "base_admin.html" %}
 
 {% block content %}
-<div style="margin-left:5%;margin-right:5%;">
-    <h4>Foods:</h4>
-    <center><a href="{% url 'newfood' %}" class="btn btn-primary">Add Food</a> </center>
-    <hr>
-    <center>
+<div class="mx-auto max-w-4xl p-8 bg-white shadow-lg rounded-lg mt-8">
+    <h4 class="text-2xl font-bold text-gray-800 mb-4">Foods</h4>
+    <div class="text-center mb-6">
+        <a href="{% url 'newfood' %}" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Add Food</a>
+    </div>
+    <hr class="my-4">
+    <div class="space-y-8">
         {% for food in foods %}
-        <div class="container">
-            <div class="row">
-                <div class="col">
+        <div class="bg-gray-100 p-6 rounded-lg shadow-md">
+            <div class="flex justify-between items-center mb-4">
+                <div>
                     <strong>Item name:</strong> {{food.itemname}}
                 </div>
-                <div class="col">
-                    <a class="btn btn-primary col-3" href="/panel/foods/edit/{{food.foodID}}" type="submit">Edit</a>
-                </div>
+                <a class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" href="/panel/foods/edit/{{food.foodID}}">Edit</a>
             </div>
-            <div class="row" style="margin-top:10px;">
-                <div class="col">
+            <div class="flex justify-between items-center">
+                <div>
                     <strong>Price:</strong> &#x20b9;{{food.price}}
                 </div>
-                <div class="col">
-                    <a class="btn btn-danger col-3" href="/panel/foods/delete/{{food.foodID}}" type="submit">Delete</a>
-                </div>
+                <a class="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500" href="/panel/foods/delete/{{food.foodID}}">Delete</a>
             </div>
         </div>
-        <hr>
+        <hr class="my-4">
         {% endfor %}
-    </center>
+    </div>
 </div>
 {% endblock %}

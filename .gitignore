@@ -1,4 +1,8 @@
-/.venv/
+/.venv
 /.env
 /.env.prod
 /.env.prod.db
+./ticketbooking/ticketbooking/_pycache_
+./ticketbooking/main/_pycache_
+/.env.hosting
+/.env.hosting.db

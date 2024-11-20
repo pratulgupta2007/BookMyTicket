@@ -2,73 +2,62 @@
 
 {% block content %}
 
-  <p></p>
-  <h1><center>{{ movies.movie }}</center></h1>
-</br>
+<div class="text-center my-8">
+  <h1 class="text-4xl font-bold text-blue-600">{{ movies.movie }}</h1>
+</div>
 
-  <div class="container">
-    <div class="row">
-      <div class="col center-block text-center">
-        <span class="align-middle">(img)</span>
+<div class="container mx-auto px-4">
+  <div class="bg-white shadow-lg rounded-lg p-8">
+    <div class="flex flex-col md:flex-row items-center">
+      <div class="md:w-1/2 text-center mb-4 md:mb-0">
+        <span class="inline-block bg-gray-200 p-4 rounded-lg">(img)</span>
       </div>
-      <div class="col">
-        <div class="row">
-          <div class="col">
+      <div class="md:w-1/2">
+        <div class="mb-4">
+          <h3 class="text-xl font-semibold text-blue-600">Languages:</h3>
+          <p class="text-gray-700">
             {% for language in languages %} 
-                {{language}} 
-                {% if forloop.last %}{% else %}|{% endif %}
+              {{ language }}{% if not forloop.last %} | {% endif %}
             {% endfor %}
-          </div>
+          </p>
         </div>
-        <div class="row">
-          <div class="col">
+        <div class="mb-4">
+          <h3 class="text-xl font-semibold text-blue-600">Types:</h3>
+          <p class="text-gray-700">
             {% for type in types %} 
-                {{type}} 
-                {% if forloop.last %}{% else %}|{% endif %}
+              {{ type }}{% if not forloop.last %} | {% endif %}
             {% endfor %}
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-          </br>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-          {{movies.get_duration}} &bull; {{movies.genre}} &bull; {{movies.rating}}
-          </div>
+          </p>
         </div>
       </div>
     </div>
+    <div class="mt-8">
+      <table class="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <thead class="bg-black text-white">
+          <tr>
+            <th class="py-3 px-4 text-left font-semibold">Theater Name</th>
+            <th class="py-3 px-4 text-left font-semibold">Date</th>
+            <th class="py-3 px-4 text-left font-semibold">Time</th>
+            <th class="py-3 px-4 text-left font-semibold">Viewing Experience</th>
+            <th class="py-3 px-4 text-left font-semibold">Language</th>
+            <th class="py-3 px-4 text-left font-semibold"></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for show, showurl in shows %}
+          <tr class="border-t border-gray-200 hover:bg-gray-100">
+            <td class="py-3 px-4"><a href="{{showurl}}" class="text-blue-600 hover:underline">{{show.get_theatername}}</a></td>
+            <td class="py-3 px-4">{{show.get_date}}</td>
+            <td class="py-3 px-4">{{show.get_time}}</td>
+            <td class="py-3 px-4">{{show.type}}</td>
+            <td class="py-3 px-4">{{show.language}}</td>
+            <td class="py-3 px-4"><a type="button" class="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700" href="{{show.get_absolute_url}}" role="button">Book</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
+</div>
 
-  <div style="margin-left:50px;margin-top:20px;margin-right:50px;margin-bottom:20px;">
-    <table class="table table-hover">
-      <thead class="thead-dark">
-        <tr>
-          <th scope="col"><h4>Theater Name</h4></th>
-          <th scope="col"><h4>Date</h4></th>
-          <th scope="col"><h4>Time</h4></th>
-          <th scope="col"><h4>Viewing Experience</h4></th>
-          <th scope="col"><h4>Language</h4></th>
-          <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for show, showurl in shows %}
-        <tr>
-          <th scope="row"><a href="{{showurl}}">{{show.get_theatername}}</a></th>
-          <td>{{show.get_date}}</td>
-          <td>{{show.get_time}}</td>
-          <td>{{show.type}}</td>
-          <td>{{show.language}}</td>
-          <td><a type="button" class="btn btn-primary" href="{{show.get_absolute_url}}" role="button">Book</a></td>
-        </tr>
-          
-        {% endfor %}
-        
-      </tbody>
-    </table>
-  </div>
-
-  {% endblock %}
+{% endblock %}

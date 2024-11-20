@@ -25,12 +25,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
-
-DEBUG = os.environ.get("DEBUG")
-
-# 'DJANGO_ALLOWED_HOSTS' should be a single string of hosts with a space between each.
-# For example: 'DJANGO_ALLOWED_HOSTS=localhost 127.0.0.1 [::1]'
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+DEBUG = int(os.environ.get("DEBUG"))
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '139.59.24.97', 'bookmyticket.live']
 
 # Application definition
 
@@ -141,8 +137,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
-STATIC_URL = "static/"
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
@@ -180,14 +174,16 @@ EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.gmail.com"
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = "bookmyticket217@gmail.com"
-EMAIL_HOST_PASSWORD = "jrlh hgwt bviv prkj"
+EMAIL_HOST_USER = os.environ.get("EMAIL_ID")
+EMAIL_HOST_PASSWORD = os.environ.get("APP_PWD")
 
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 if DEBUG:
     CSRF_TRUSTED_ORIGINS = ["http://localhost:1337"]
+else:
+    CSRF_TRUSTED_ORIGINS = os.environ.get("CSRF_TRUSTED_ORIGINS").split(" ")
 
 STORAGES = {
     # ...
@@ -195,3 +191,5 @@ STORAGES = {
         "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
     },
 }
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

@@ -10,6 +10,7 @@ from .models import (
     user,
     tickets,
     OtpToken,
+    foodorder
 )
 
 admin.site.register(wallet)
@@ -21,3 +22,4 @@ admin.site.register(shows)
 admin.site.register(movies)
 admin.site.register(tickets)
 admin.site.register(OtpToken)
+admin.site.register(foodorder)

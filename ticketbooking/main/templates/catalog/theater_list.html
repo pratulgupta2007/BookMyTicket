@@ -1,14 +1,16 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-<h1><center>Theaters</center></h1>
-
+<div class="mx-auto max-w-4xl p-8 bg-white shadow-lg rounded-lg mt-8">
+  <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Theaters</h1>
+  <div class="space-y-4">
     {% for theater in theaterlist %}
-        <center>
-               <a href="{{theater.get_theater_url}}">
-              {{ theater.theater_name }}</a>
-              
-        </center>
+    <div class="text-center">
+      <a href="{{theater.get_theater_url}}" class="text-blue-600 hover:underline text-xl font-semibold">
+        {{ theater.theater_name }}
+      </a>
+    </div>
     {% endfor %}
-
-  {% endblock %}
+  </div>
+</div>
+{% endblock %}

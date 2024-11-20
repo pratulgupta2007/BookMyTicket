@@ -2,20 +2,21 @@
 
 {% block content %}
 
-<div style="margin-left:5%;margin-right:5%;">
-    <h4>Edit food</h4>
+<div class="mx-auto max-w-2xl p-8 bg-white shadow-lg rounded-lg mt-8">
+    <h4 class="text-2xl font-bold text-gray-800 mb-4">Edit Food</h4>
     <form method="post">
         {% csrf_token %}
-        <div>
-            <label for="id_itemname">Itemname:</label>
-            <input type="text" name="itemname" required id="id_itemname" value="{{food.itemname}}" class="form-control">
+        <div class="mb-4">
+            <label for="id_itemname" class="block text-gray-700">Item Name:</label>
+            <input type="text" name="itemname" required id="id_itemname" value="{{food.itemname}}" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
-        <div>
-            <label for="id_price">Price:</label>
-            <input type="number" name="price" step="0.01" required id="id_price" value="{{food.price}}"
-                class="form-control">
+        <div class="mb-4">
+            <label for="id_price" class="block text-gray-700">Price:</label>
+            <input type="number" name="price" step="0.01" required id="id_price" value="{{food.price}}" class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
         </div>
-        <center><button type="submit" class="btn btn-primary col-4" style="margin-top:10px;">Save</button></center>
+        <div class="text-center">
+            <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Save</button>
+        </div>
     </form>
 </div>
 

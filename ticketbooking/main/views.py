@@ -73,8 +73,8 @@ class MovieDetailView(generic.DetailView):
             showslist.order_by("type").values_list("type", flat=True).distinct()
         )
         context["shows"] = [[x, ""] for x in showslist.order_by("date_time")]
-        for x in context["shows"]:
-            x[1] = adminuser.objects.filter(theater_name=x[0].get_theatername())[
+        for y in context["shows"]:
+            y[1] = adminuser.objects.filter(theater_name=y[0].get_theatername())[
                 0
             ].get_theater_url()
         return context

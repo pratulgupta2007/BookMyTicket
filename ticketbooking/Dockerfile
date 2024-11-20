@@ -1,4 +1,3 @@
-# pull official base image
 FROM python:3.11.4-slim-buster
 
 WORKDIR /usr/src/ticketbooking
@@ -16,8 +15,6 @@ COPY ./entrypoint.sh .
 RUN sed -i 's/\r$//g' /usr/src/ticketbooking/entrypoint.sh
 RUN chmod +x /usr/src/ticketbooking/entrypoint.sh
 
-# copy project
 COPY . .
 
-# run entrypoint.sh
 CMD ["/usr/src/ticketbooking/entrypoint.sh"]

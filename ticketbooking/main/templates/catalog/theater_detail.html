@@ -2,43 +2,35 @@
 
 {% block content %}
 
-  <p></p>
-  <h1><center>{{ adminuser.theater_name }}</center></h1>
+<div class="mx-auto max-w-4xl p-8 bg-white shadow-lg rounded-lg mt-8">
+  <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">{{ adminuser.theater_name }}</h1>
 
-  
-
-  <div style="margin-left:50px;margin-top:20px;margin-right:50px;margin-bottom:20px;">
-
-
-
-    <table class="table table-hover">
-      <thead class="thead-dark">
+  <div class="overflow-x-auto">
+    <table class="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden">
+      <thead class="bg-black text-white">
         <tr>
-          <th scope="col"><h4>Movie Name</h4></th>
-          <th scope="col"><h4>Date</h4></th>
-          <th scope="col"><h4>Time</h4></th>
-          <th scope="col"><h4>Viewing Experience</h4></th>
-          <th scope="col"><h4>Language</h4></th>
-          <th scope="col"></th>
+          <th class="py-3 px-4 text-left font-semibold">Movie Name</th>
+          <th class="py-3 px-4 text-left font-semibold">Date</th>
+          <th class="py-3 px-4 text-left font-semibold">Time</th>
+          <th class="py-3 px-4 text-left font-semibold">Viewing Experience</th>
+          <th class="py-3 px-4 text-left font-semibold">Language</th>
+          <th class="py-3 px-4 text-left font-semibold"></th>
         </tr>
       </thead>
       <tbody>
         {% for show, showurl in shows %}
-        <tr>
-          <th scope="row"><a href="{{showurl}}">{{show.get_moviename}}</a></th>
-          <td>{{show.get_date}}</td>
-          <td>{{show.get_time}}</td>
-          <td>{{show.type}}</td>
-          <td>{{show.language}}</td>
-          <td><a type="button" class="btn btn-primary" href="{{show.get_absolute_url}}" role="button">Book</a></td>
+        <tr class="border-t border-gray-200 hover:bg-gray-100">
+          <td class="py-3 px-4"><a href="{{showurl}}" class="text-blue-600 hover:underline">{{show.get_moviename}}</a></td>
+          <td class="py-3 px-4">{{show.get_date}}</td>
+          <td class="py-3 px-4">{{show.get_time}}</td>
+          <td class="py-3 px-4">{{show.type}}</td>
+          <td class="py-3 px-4">{{show.language}}</td>
+          <td class="py-3 px-4"><a type="button" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500" href="{{show.get_absolute_url}}" role="button">Book</a></td>
         </tr>
-          
         {% endfor %}
-        
       </tbody>
     </table>
-    
-    
   </div>
+</div>
 
-  {% endblock %}
+{% endblock %}

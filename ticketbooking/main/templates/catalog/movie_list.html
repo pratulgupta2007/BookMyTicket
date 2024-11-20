@@ -1,21 +1,21 @@
 {% extends "base_generic.html" %}
 
 {% block content %}
-<h1><center>Movies</center></h1>
+<h1 class="text-center text-3xl font-extrabold my-8 text-indigo-600">Movies</h1>
 
-    <div class="container">
+<div class="container mx-auto px-4">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
     {% for movie in movielist %}
-      {% if forloop.first %}<div class="row">{% endif %}
-      <div class="col">
-        <center>
-               <a href="{{movie.get_absolute_url}}">
-              {{ movie.movie }}</a></br> ({{movie.genre}})
-              
-        </center>
+    <div class="bg-white shadow-lg rounded-lg p-6">
+      <div class="text-center">
+        <a href="{{ movie.get_absolute_url }}" class="text-indigo-600 hover:text-indigo-800 text-xl font-semibold">
+          {{ movie.movie }}
+        </a>
+        <p class="text-gray-500 mt-2">({{ movie.genre }})</p>
       </div>
-      {% if forloop.counter|divisibleby:3 %}</div><div class="row">{% endif %}
-    {% if forloop.last %}</div>{% endif %}
-    {% endfor %}
     </div>
+    {% endfor %}
+  </div>
+</div>
 
-  {% endblock %}
+{% endblock %}
