@@ -13,10 +13,10 @@ services:
         python manage.py migrate &&
         export MIGRATE=1 &&
         python manage.py collectstatic --noinput && 
-        gunicorn ticketbooking.wsgi:application --bind 0.0.0.0:8000",
+        gunicorn ticketbooking.wsgi:application --bind 0.0.0.0:9000",
       ]
     expose:
-      - 8000
+      - 9000
     env_file:
       - .env.hosting
     depends_on:
