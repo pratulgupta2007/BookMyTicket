@@ -42,6 +42,7 @@ services:
     volumes:
       - certbot-web:/vol/www
       - certbot-certs:/etc/letsencrypt
+      - static_volume:/home/app/web/staticfiles
     env_file:
       - .env.hosting
 
