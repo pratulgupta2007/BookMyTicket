@@ -17,15 +17,19 @@
     <aside>
       <nav class="bg-blue-600 p-4">
         <div class="container mx-auto flex justify-between items-center">
-          <a class="text-white text-xl font-bold" href="{% url 'panel' %}">Admin Panel</a>
+          <ul class="flex space-x-4 md:items-center">
+            <li>
+              <a class="text-white text-xl font-bold" href="{% url 'panel' %}">Admin Panel</a>
+            </li>
+            <li>
+              <a class="nav-link text-white" href="{%url 'admin_shows'%}">Shows</a>
+            </li>
+            <li>
+              <a class="nav-link text-white" href="{%url 'admin_foods'%}">Foods</a>
+            </li>
+          </ul>
           <div class="hidden md:flex md:items-center md:w-auto" id="navbarSupportedContent">
             <ul class="flex space-x-4">
-              <li>
-                <a class="nav-link text-white" href="{%url 'admin_shows'%}">Shows</a>
-              </li>
-              <li>
-                <a class="nav-link text-white" href="{%url 'admin_foods'%}">Foods</a>
-              </li>
               {% if user.is_authenticated %}
               <li>
                 <a class="text-white hover:text-blue-300" aria-current="page" href="#">

@@ -178,7 +178,7 @@ EMAIL_HOST_USER = os.environ.get("EMAIL_ID")
 EMAIL_HOST_PASSWORD = os.environ.get("APP_PWD")
 
 STATIC_URL = "/static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles", "static")
 
 if DEBUG:
     CSRF_TRUSTED_ORIGINS = ["http://localhost:1337"]

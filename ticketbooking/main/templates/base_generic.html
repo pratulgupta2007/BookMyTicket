@@ -17,15 +17,20 @@
   <aside>
     <nav class="bg-black p-4">
       <div class="container mx-auto flex justify-between items-center">
-        <a class="text-white text-xl font-bold" href="{% url 'index' %}">BookMyTicket</a>
+        <ul class="flex space-x-4 md:items-center">
+          <li>
+            <a class="text-white text-xl font-bold" href="{% url 'index' %}">BookMyTicket</a>
+          </li>
+          <li>
+            <a class="text-white py-2 hover:text-blue-300" href="{% url 'movies' %}">Movies</a>
+          </li>
+          <li>
+            <a class="text-white py-2 hover:text-blue-300" href="{% url 'theaters' %}">Theaters</a>
+          </li>
+        </ul>
+        
         <div class="hidden md:flex md:items-center md:w-auto" id="navbarSupportedContent">
           <ul class="flex space-x-4">
-            <li>
-              <a class="text-white hover:text-blue-300" href="{% url 'movies' %}">Movies</a>
-            </li>
-            <li>
-              <a class="text-white hover:text-blue-300" href="{% url 'theaters' %}">Theaters</a>
-            </li>
             {% if user.is_authenticated %}
             <li>
               <a class="text-white hover:text-blue-300" aria-current="page" href="{% url 'profile' %}">
