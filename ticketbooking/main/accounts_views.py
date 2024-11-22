@@ -8,6 +8,7 @@ from django.core.mail import send_mail
 from django.conf import settings
 import json
 import uuid
+import random
 
 
 # Create your views here.
@@ -183,7 +184,8 @@ def VerificationView(request):
                 return redirect("verification")
         elif request.session["toverify"] != "":
             otp = OtpToken.objects.create(
-                user=User, otp_expires_at=timezone.now() + timezone.timedelta(minutes=5)
+                user=User, otp_expires_at=timezone.now() + timezone.timedelta(minutes=5),
+                otp_code=str(random.randint(100000, 999999))
             )
 
             subject = "Email Verification"

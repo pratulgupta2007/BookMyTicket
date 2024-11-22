@@ -7,6 +7,7 @@ import secrets
 from django.utils import timezone
 import datetime
 import pytz
+import random
 
 from django.contrib.auth import get_user_model
 
@@ -199,16 +200,20 @@ class tickets(models.Model):
 
 
 class OtpToken(models.Model):
+
+    
+
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="otps"
     )
-    otp_code = models.CharField(max_length=6, default=secrets.token_hex(3))
-    tp_created_at = models.DateTimeField(auto_now_add=True)
+    otp_code = models.CharField(max_length=6, default=' ')
+    otp_created_at = models.DateTimeField(auto_now_add=True)
     otp_expires_at = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return self.user.username
 
+    
 
 class foodorder(models.Model):
     orderID = models.UUIDField(default=uuid.uuid4, primary_key=True)
