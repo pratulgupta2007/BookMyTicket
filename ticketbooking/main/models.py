@@ -16,6 +16,8 @@ class wallet(models.Model):
             return str(user.objects.get(walletid=self.walletid).user.email)
         elif adminuser.objects.filter(walletid=self.walletid).exists():
             return str(adminuser.objects.get(walletid=self.walletid).theater_name)
+        else:
+            return str(self.walletid)
 
 
 class transactions(models.Model):
