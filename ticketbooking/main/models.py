@@ -267,7 +267,10 @@ class foodorder(models.Model):
     def __init__(self, *args: Any, **kwargs: Any) :
         super().__init__(*args, **kwargs)
         self.old_verified = self.verified
-    
+        
+    def __str__(self):
+        return str(self.ticket) + " | " + str(self.food) + " | " + str(self.count)
+
     def total(self):
         return self.count * self.food.price
     
@@ -292,3 +295,4 @@ class foodorder(models.Model):
                 self.transaction.save()
         super().save(*args, **kwargs)
         self.old_verified = self.verified
+        
