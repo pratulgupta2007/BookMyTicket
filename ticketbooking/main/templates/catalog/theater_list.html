@@ -7,7 +7,7 @@
     {% for theater in theaterlist %}
     <div class="text-center">
       <a href="{{theater.get_theater_url}}" class="text-gray-600 hover:underline text-xl font-semibold">
-        {{ theater.theater_name }}
+        {{theater}}
       </a>
     </div>
     {% endfor %}

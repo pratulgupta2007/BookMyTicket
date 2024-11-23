@@ -1,6 +1,4 @@
-from django.views import generic
 from django.utils import timezone
-from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
@@ -10,8 +8,6 @@ import json
 import uuid
 import random
 
-
-# Create your views here.
 from .models import (
     wallet,
     transactions,
@@ -23,9 +19,9 @@ from .models import (
     foodorder,
 )
 from .forms import BillingForm, ConfirmRefund
+from .decorators import user_passes_test_with_logout
 
-
-@login_required
+@user_passes_test_with_logout()
 def ProfileView(request):
     try:
         context = {
@@ -40,19 +36,19 @@ def ProfileView(request):
     return render(request, "account/profile.html", context=context)
 
 
-@login_required
+@user_passes_test_with_logout()
 def AddBalanceView(request):
     return render(request, "account/balance.html")
 
 
-@login_required
+@user_passes_test_with_logout()
 def TicketsView(request):
     ticketlist = tickets.objects.filter(user=(request.user)).filter(verified=True)
     context = {"tickets": ticketlist}
     return render(request, "account/ticketslist.html", context=context)
 
 
-@login_required
+@user_passes_test_with_logout()
 def BillingView(request):
     error = None
     context = {}
@@ -106,75 +102,80 @@ def BillingView(request):
     context["error"] = error
     return render(request, "account/billing.html", context=context)
 
+def OtpEmail(User, otp):
+    subject = "Email Verification"
+    message = f"""
+                Hi {User.username}, here is your OTP {otp}
+                
+                """
+    sender = settings.EMAIL_HOST_USER
+    receiver = [
+        User.email,
+    ]
 
-@login_required
+    send_mail(
+        subject,
+        message,
+        sender,
+        receiver,
+        fail_silently=False,
+    )
+
+@user_passes_test_with_logout()
 def VerificationView(request):
     User = request.user
     context = {}
     try:
         if request.method == "POST":
-            # valid token
             user_otp = OtpToken.objects.filter(user=User).last()
-            if user_otp.otp_code == request.POST["otp_code"]:
 
+            if user_otp.otp_code == request.POST["otp_code"]:
                 if user_otp.otp_expires_at > timezone.now():
                     verifyobj = request.session["toverify"].split("%")
+
                     if verifyobj[0] == "ticket":
                         t = tickets.objects.get(pk=uuid.UUID(verifyobj[1]))
-                        t.verified = True
-                        t.save()
-
-                        t.transaction.status = "C"
-                        t.transaction.save()
-
-                        userobj = user.objects.filter(user=(t.user))[0]
-                        userobj.walletid.balance = userobj.walletid.balance - t.total
-                        userobj.walletid.save()
-                        t.transaction.receivingID.balance = (
-                            t.transaction.receivingID.balance + t.total
-                        )
-                        t.transaction.receivingID.save()
-
-                        t.show.seats_booked = t.show.seats_booked + t.count
-                        t.show.save()
-
-                        user_otp.delete()
-
-                        request.session["toverify"] = ""
-
-                        return redirect("ticketslist")
+                        if timezone.now() >= t.show.date_time:
+                            error = "Show date passed"
+                            return render(request, "account/404.html", context={'error': error})
+                        
+                        elif t.count > t.show.availableseats():
+                            error = "Seats not available"
+                            return render(request, "account/404.html", context={'error': error})
+                        
+                        else:
+                            t.verified = True
+                            t.save()
+                            user_otp.delete()
+                            request.session["toverify"] = ""
+                            return redirect("ticketslist")
 
                     elif verifyobj[0] == "food":
                         t = tickets.objects.get(pk=uuid.UUID(verifyobj[1]))
-                        orders = foodorder.objects.filter(ticket=t).filter(status="I")
-                        total = 0
-                        userobj = user.objects.filter(user=(t.user))[0]
-                        adminobj = t.show.adminID
-
-                        for order in orders:
-                            order.status = "C"
-                            total += order.total()
-                            order.transaction = transactions.objects.create(
-                                sendingID=userobj.walletid,
-                                receivingID=adminobj.walletid,
-                                amount=order.total(),
-                                status="C",
+                        if timezone.now() >= t.show.date_time:
+                            error = "Show date passed"
+                            return HttpResponseRedirect(
+                                reverse("food", args=(error,))
                             )
-                            order.save()
+                        
+                        else:
+                            orders = foodorder.objects.filter(ticket=t).filter(verified=False).filter(in_cart=True)
+                            userobj = user.objects.filter(user=(t.user))[0]
+                            adminobj = t.show.adminID
 
-                        t.total += total
-                        t.save()
+                            for order in orders:
+                                order.transaction = transactions.objects.create(
+                                    sendingID=userobj.walletid,
+                                    receivingID=adminobj.walletid,
+                                    amount=order.total(),
+                                )
+                                order.save()
+                                order.verified = True
+                                order.save()
 
-                        userobj.walletid.balance = userobj.walletid.balance - total
-                        userobj.walletid.save()
-                        adminobj.walletid.balance = adminobj.walletid.balance + total
-                        adminobj.walletid.save()
-
-                        user_otp.delete()
-                        request.session["toverify"] = ""
-                        return HttpResponseRedirect(
-                            reverse("food", args=(str(t.ticketID),))
-                        )
+                            user_otp.delete()
+                            request.session["toverify"] = ""
+                            return HttpResponseRedirect(reverse("food", args=(str(t.ticketID),)))
                 else:
                     context["error"] = "The OTP has expired, get a new OTP!"
                     return redirect("verification")
@@ -182,70 +183,39 @@ def VerificationView(request):
             else:
                 context["error"] = "Invalid OTP entered, enter a valid OTP!"
                 return redirect("verification")
+            
         elif request.session["toverify"] != "":
             otp = OtpToken.objects.create(
                 user=User, otp_expires_at=timezone.now() + timezone.timedelta(minutes=5),
                 otp_code=str(random.randint(100000, 999999))
             )
+            OtpEmail(request.user, otp.otp_code)
 
-            subject = "Email Verification"
-            message = f"""
-                                Hi {User.username}, here is your OTP {otp.otp_code} 
-                                it expires in 5 minute, use the url below to redirect back to the website
-                                http://127.0.0.1:8000/accounts/verification/
-                                
-                                """
-            sender = settings.EMAIL_HOST_USER
-            receiver = [
-                User.email,
-            ]
-
-            send_mail(
-                subject,
-                message,
-                sender,
-                receiver,
-                fail_silently=False,
-            )
+            
     except KeyError:
         context["error"] = "Access denied."
 
     return render(request, "account/verification.html", context=context)
 
+def ErrorView(request, exception):
+    return render(request, 'account/404.html', context={'error': exception})
 
-@login_required
+
+@user_passes_test_with_logout()
 def resend_otp(request):
     if request.method == "POST":
         otp = OtpToken.objects.create(
-            user=user, otp_expires_at=timezone.now() + timezone.timedelta(minutes=5)
+            user=user, otp_expires_at=timezone.now() + timezone.timedelta(minutes=5),
+            otp_code=str(random.randint(100000, 999999))
         )
 
-        subject = "Email Verification"
-        message = f"""
-                            Hi {request.user.username}, here is your OTP {otp.otp_code} 
-                            it expires in 5 minute, use the url below to redirect back to the website
-                            http://127.0.0.1:8000/accounts/verification/
-                            
-                            """
-        sender = settings.EMAIL_HOST_USER
-        receiver = [
-            user.email,
-        ]
-        user_otp = OtpToken.objects.filter(user=user).last()
-
-        send_mail(
-            subject,
-            message,
-            sender,
-            receiver,
-            fail_silently=False,
-        )
+        OtpEmail(request.user, otp.otp_code)
         return redirect("verification")
 
     return render(request, "account/resend_otp.html")
 
 
-@login_required
+@user_passes_test_with_logout()
 def RefundView(request, ticket):
     if request.method == "POST":
         form = ConfirmRefund(request.POST)
@@ -258,7 +228,7 @@ def RefundView(request, ticket):
     return render(request, "account/refund.html")
 
 
-@login_required
+@user_passes_test_with_logout()
 def FoodView(request, ticket):
     ticket = tickets.objects.get(pk=ticket)
     context = {}
@@ -271,8 +241,8 @@ def FoodView(request, ticket):
     else:
         form = BillingForm()
     context["form"] = form
-    context["orders"] = foodorder.objects.filter(ticket=ticket).filter(status="C")
-    context["cart"] = foodorder.objects.filter(ticket=ticket).filter(status="I")
+    context["orders"] = foodorder.objects.filter(ticket=ticket).filter(verified=True)
+    context["cart"] = foodorder.objects.filter(ticket=ticket).filter(in_cart=True)
     context["foods"] = foods.objects.filter(adminID=ticket.show.adminID)
     context["ticket"] = ticket
     return render(request, "account/food.html", context=context)
@@ -282,7 +252,7 @@ def GenOrder(request, ticket, item):
     ticket = tickets.objects.get(pk=ticket)
     item = foods.objects.get(pk=item)
     try:
-        order = foodorder.objects.create(ticket=ticket, food=item)
+        order = foodorder.objects.get_or_create(ticket=ticket, food=item, in_cart=True)
         return HttpResponseRedirect(reverse("food", args=(str(ticket.ticketID),)))
     except Exception as e:
         print(e)
@@ -317,7 +287,27 @@ def AddReduceOrder(request, ticket, order, operation):
         pass
     return render(request, "account/genorder.html")
 
+@user_passes_test_with_logout()
+def RefundFood(request, ticket, order):
+    if request.user==foodorder.objects.get(pk=order).ticket.user:
+        if request.method == "POST":
+            form = ConfirmRefund(request.POST)
+            if form.is_valid():
+                order = foodorder.objects.get(pk=order)
+                order.verified = False
+                order.save()
+                return HttpResponseRedirect(reverse("food", args=(str(order.ticket.ticketID),)))
+        else:
+            form = ConfirmRefund()
+        return render(request, "account/refundfood.html")
+    else:
+        return render(request, "account/404.html", context={'error': 'Access Denied'})
 
-@login_required
+    
+
+@user_passes_test_with_logout()
 def TransactionsView(request):
-    return render(request, "account/transactions.html")
+    context={
+        'transactions':transactions.objects.filter(sendingID=user.objects.get(user=request.user).walletid).exclude(status="I").order_by('-date')
+        }
+    return render(request, "account/transactions.html", context=context)

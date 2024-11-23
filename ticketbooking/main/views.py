@@ -38,7 +38,7 @@ def index(request):
             "num_theaters": adminuser.objects.all().count(),
             "num_foods": foods.objects.count(),
         }
-    if request.user.is_authenticated:
+    if request.user.is_authenticated and not request.user.groups.filter(name='Theater Admin').exists():
         try:
             context["balance"] = user.objects.filter(user=(request.user))[
                 0
@@ -74,7 +74,7 @@ class MovieDetailView(generic.DetailView):
         )
         context["shows"] = [[x, ""] for x in showslist.order_by("date_time")]
         for y in context["shows"]:
-            y[1] = adminuser.objects.filter(theater_name=y[0].get_theatername())[
+            y[1] = adminuser.objects.filter(theater_name=y[0].adminID())[
                 0
             ].get_theater_url()
         return context
@@ -99,7 +99,7 @@ class TheaterDetailView(generic.DetailView):
         )
         context["shows"] = [[x, ""] for x in showslist.order_by("date_time")]
         for x in context["shows"]:
-            x[1] = movies.objects.filter(movie=x[0].get_moviename())[
+            x[1] = movies.objects.filter(movie=x[0].movie.movie)[
                 0
             ].get_absolute_url()
         return context

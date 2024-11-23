@@ -36,11 +36,20 @@ class EditShow(forms.Form):
     date = forms.CharField(widget=forms.TextInput(attrs={"type": "date"}))
     time = forms.CharField(widget=forms.TextInput(attrs={"type": "time"}))
     seats = forms.IntegerField(min_value=1)
-    price = forms.DecimalField(max_digits=10, decimal_places=2)
-    type = forms.CharField(max_length=20)
-    language = forms.CharField(max_length=20)
+    price = forms.DecimalField(min_value=1, max_digits=10, decimal_places=2)
+    type = forms.ChoiceField(widget=forms.Select ,choices=[("2D", "2D"), ("3D", "3D"), ("4DX", "4DX"), ("IMAX 2D", "IMAX 2D"), ("IMAX 3D", "IMAX 3D"), 
+                                      ("ICE", "ICE"), ("ICE 3D", "ICE 3D"), ("2D SCREEN X", "2D SCREEN X"), ("3D SCREEN X", "3D SCREEN X")])
+    language = forms.ChoiceField(choices=[("English", "English"), ("Hindi", "Hindi"), ("Malayalam", "Malayalam"), ("Punjabi", "Punjabi"), 
+                                          ("Telugu", "Telugu"), ("Multi Language", "Multi Language"), ("Tamil", "Tamil"), ("Bengali", "Bengali"), ("Japanese", "Japanese")])
+    class Meta:
+        fields = ['seats', 'price', 'type', 'language']
+        widgets = {
+            'type': forms.Select(attrs={
+                'class': 'w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500'
+            }),
+        }
 
 
 class EditFood(forms.Form):
     itemname = forms.CharField()
-    price = forms.DecimalField(max_digits=10, decimal_places=2)
+    price = forms.DecimalField(min_value=1, max_digits=10, decimal_places=2)

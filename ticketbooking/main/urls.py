@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path
 from . import views
 
 
@@ -14,6 +14,8 @@ from .accounts_views import (
         GenOrder,
         AddReduceOrder,
         TransactionsView,
+        ErrorView,
+        RefundFood,
     )
 from .panel_views import (
         panel,
@@ -48,12 +50,14 @@ urlpatterns = [
     path("accounts/refund/<uuid:ticket>", RefundView, name="refund"),
     path("accounts/food/<uuid:ticket>", FoodView, name="food"),
     path("accounts/food/<uuid:ticket>/<uuid:item>", GenOrder, name="genorder"),
+    path("accounts/food/<uuid:ticket>/<uuid:order>/refund", RefundFood, name="refundorder"),
     path(
         "accounts/food/<uuid:ticket>/<uuid:order>/<str:operation>",
             AddReduceOrder,
             name="addreduceorder",
         ),
     path("accounts/transactions", TransactionsView, name="transactions"),
+    path("accounts/error", ErrorView, name="error"),
 
     path("panel", panel, name="panel"),
     path("panel/login", adminlogin, name="admin_login"),

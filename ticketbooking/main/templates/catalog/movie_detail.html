@@ -46,7 +46,7 @@
         <tbody>
           {% for show, showurl in shows %}
           <tr class="border-t border-gray-200 hover:bg-gray-100">
-            <td class="py-3 px-4"><a href="{{showurl}}" class="text-blue-600 hover:underline">{{show.get_theatername}}</a></td>
+            <td class="py-3 px-4"><a href="{{showurl}}" class="text-blue-600 hover:underline">{{show.adminID}}</a></td>
             <td class="py-3 px-4">{{show.get_date}}</td>
             <td class="py-3 px-4">{{show.get_time}}</td>
             <td class="py-3 px-4">{{show.type}}</td>

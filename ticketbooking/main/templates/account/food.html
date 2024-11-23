@@ -11,6 +11,9 @@
             <div class="text-gray-700">{{ order.food.itemname }}</div>
             <div class="text-gray-700">&#x20b9;{{ order.food.price }}</div>
             <div class="text-gray-700">{{ order.count }}</div>
+            <td class="py-3 px-4">
+                <a class="bg-red-600 text-white py-1 px-3 rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500" href="{{ ticket.ticketID }}/{{ order.orderID }}/refund">Remove</a>
+            </td>
         </div>
         {% endfor %}
     </div>

@@ -5,7 +5,6 @@ from django.contrib.auth import login, logout
 from django.contrib.auth.models import User
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.contrib import messages
 from datetime import datetime
 import pytz
 
@@ -34,6 +33,9 @@ on_admin_group = is_on_group_check("Theater Admin")
 
 
 def adminlogin(request):
+
+    context={}
+
     if request.method == "POST":
         username = request.POST.get("username").lower()
         password = request.POST.get("password")
@@ -41,7 +43,7 @@ def adminlogin(request):
         try:
             user = User.objects.get(username=username)
         except:
-            messages.error(request, "User Not Found")
+            context['error'] = request, "User Not Found"
             return redirect("home")
 
         if user.groups.filter(name="Theater Admin").exists():
@@ -51,9 +53,9 @@ def adminlogin(request):
                 )
                 return redirect("panel")
             else:
-                messages.error(request, "Username or Password does not match.")
+                context['error'] = "Username or Password does not match."
         else:
-            messages.error(request, "Access Denied")
+            context['error']="Access Denied"
 
     return render(request, "panel/login.html")
 
@@ -103,6 +105,9 @@ def newfood(request):
         form = EditFood(request.POST)
         if form.is_valid():
             data = form.cleaned_data
+            if foods.objects.filter(itemname=data["itemname"]).exists():
+                form.add_error("itemname", "Item already exists.")
+                return render(request, "panel/newfood.html", context={"form": form})
             foods.objects.create(
                 itemname=data["itemname"],
                 price=data["price"],
@@ -173,8 +178,8 @@ def editshow(request, showID):
         else:
             form = EditShow()
     else:
-        messages.error(request, "Show date has passed.")
-    context = {"show": show, "movies": movielist, "form": form}
+        context['error']="Show date has passed."
+    context["form"]=form
     return render(request, "panel/editshow.html", context=context)
 
 
@@ -220,6 +225,7 @@ def newshow(request):
 @user_passes_test(on_admin_group, login_url="admin_login")
 def refundshow(request, showID):
     show = shows.objects.get(pk=showID)
+    context={}
     if show.date_time > timezone.now():
         if request.method == "POST":
             form = ConfirmRefund(request.POST)
@@ -232,5 +238,5 @@ def refundshow(request, showID):
         else:
             form = ConfirmRefund()
     else:
-        messages.error(request, "Show date has passed.")
-    return render(request, "panel/refund.html")
+        context['error']="Show date has passed."
+    return render(request, "panel/refund.html", context=context)
