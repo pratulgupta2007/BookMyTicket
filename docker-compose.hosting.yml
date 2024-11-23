@@ -9,9 +9,8 @@ services:
       [
         "/bin/sh",
         "-c",
-        "export MIGRATE=0 &&
+        "export MIGRATE=1 &&
         python manage.py migrate &&
-        export MIGRATE=1 &&
         python manage.py collectstatic --noinput && 
         gunicorn ticketbooking.wsgi:application --bind 0.0.0.0:9000",
       ]
@@ -28,6 +27,8 @@ services:
       - postgres_data:/var/lib/postgresql/data/
     env_file:
       - .env.hosting.db
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
       
   nginx:
     build:
