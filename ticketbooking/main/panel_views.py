@@ -230,11 +230,14 @@ def refundshow(request, showID):
         if request.method == "POST":
             form = ConfirmRefund(request.POST)
             if form.is_valid():
-                ticket = tickets.objects.filter(show=show)
-                for x in ticket:
-                    x.revertticket()
-                show.delete()
-                return HttpResponseRedirect(reverse("admin_shows"))
+                if show.date_time > timezone.now():
+                    ticket = tickets.objects.filter(show=show)
+                    for x in ticket:
+                        x.revertticket()
+                    show.delete()
+                    return HttpResponseRedirect(reverse("admin_shows"))
+                else:
+                    context['error']="Show date has passed."
         else:
             form = ConfirmRefund()
     else:
