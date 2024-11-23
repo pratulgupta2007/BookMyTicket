@@ -53,16 +53,15 @@ def BillingView(request):
     error = None
     context = {}
     try:
-        tempticket = json.loads(request.session["tempticket"])
+        tempticket = tickets.objects.get(pk=uuid.UUID(request.session["tempticket"]))
 
-        if tempticket["user"] == str(request.user):
-            temp = {
-                "count": int(tempticket["count"]),
-                "show": shows.objects.get(pk=uuid.UUID(tempticket["show"])),
-                "price": float(tempticket["price"]),
+        if tempticket.user == request.user:
+            context = {
+                "count": tempticket.count,
+                "show": tempticket.show,
+                "price": tempticket.total/tempticket.count,
+                "total": tempticket.total,
             }
-            context = temp
-            context["total"] = context["count"] * context["price"]
             if (
                 context["total"]
                 > user.objects.filter(user=(request.user))[0].walletid.balance
@@ -73,22 +72,15 @@ def BillingView(request):
                     form = BillingForm(request.POST)
                     if form.is_valid():
                         unverified_tr = transactions.objects.create(
-                            sendingID=user.objects.filter(user=(request.user))[
-                                0
-                            ].walletid,
-                            receivingID=temp["show"].adminID.walletid,
+                            sendingID=user.objects.filter(user=(request.user))[0].walletid,
+                            receivingID=tempticket.show.adminID.walletid,
                             amount=context["total"],
                             status="I",
                         )
-                        unverified_ticket = tickets.objects.create(
-                            user=request.user,
-                            show=temp["show"],
-                            count=temp["count"],
-                            total=context["total"],
-                            transaction=unverified_tr,
-                        )
+                        tempticket.transaction = unverified_tr
+                        tempticket.save()
                         request.session["toverify"] = "ticket%" + str(
-                            unverified_ticket.ticketID
+                            tempticket.ticketID
                         )
                         request.session["tempticket"] = ""
                         return redirect("verification")
@@ -106,13 +98,9 @@ def OtpEmail(User, otp):
     subject = "Email Verification"
     message = f"""
                 Hi {User.username}, here is your OTP {otp}
-                
                 """
     sender = settings.EMAIL_HOST_USER
-    receiver = [
-        User.email,
-    ]
-
+    receiver = [User.email,]
     send_mail(
         subject,
         message,

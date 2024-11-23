@@ -4,11 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-import json
 import random
 
-
-# Create your views here.
 from .models import (
     wallet,
     user,
@@ -16,6 +13,7 @@ from .models import (
     foods,
     shows,
     movies,
+    tickets
 )
 from .forms import TicketForm
 
@@ -74,9 +72,7 @@ class MovieDetailView(generic.DetailView):
         )
         context["shows"] = [[x, ""] for x in showslist.order_by("date_time")]
         for y in context["shows"]:
-            y[1] = adminuser.objects.filter(theater_name=y[0].adminID())[
-                0
-            ].get_theater_url()
+            y[1] = y[0].adminID.get_theater_url()
         return context
 
     template_name = "catalog/movie_detail.html"
@@ -118,15 +114,13 @@ def ShowDetailView(request, pk):
             elif data > show.availableseats():
                 error = "Seats not available"
             else:
-                tempticket = json.dumps(
-                    {
-                        "count": str(data),
-                        "show": str(show.showID),
-                        "user": str(request.user),
-                        "price": str(show.price),
-                    }
+                tempticket = tickets.objects.create(
+                        count= data,
+                        show=show,
+                        user=request.user,
+                        total=show.price*data,
                 )
-                request.session["tempticket"] = tempticket
+                request.session["tempticket"] = str(tempticket.ticketID)
                 return HttpResponseRedirect(reverse("billing"))
     else:
         form = TicketForm()
