@@ -31,9 +31,6 @@ MIGRATE=0
 Get CLIEND_ID and CLIENT_SECRET from google oauth api
 EMAIL_ID and APP_PWD from google security settings
 
-Configure the oauth settings as the following:
-![alt text](images/oauth_config.jpg)
-
 4. Run the following in root directory:
 
 ```
@@ -73,22 +70,3 @@ docker-compose -f docker-compose.prod.yml up -d --build
 
 ## Walkthrough
 https://youtu.be/YzNGsqDOGKg
-
-## Docker commands
-Some docker commands I used:
-```
-docker-compose build --> For building containers
-docker-compose up -d --> Runs containers while detached
-docker-compose up -d --build --> Effectively combines the above 2 commands
-docker-compose pull --> Pull images
-docker-compose exec <service> <some command> --noinput --> To run a certain command in the service-specific container
-docker-compose -f <custom compose file> .... --> Used for compose files with different name or address than ./docker-compose.yml
-
-docker exec -ti <postgres_container_name> psql -U <username> --> To open psql cmd line in terminal. Useful for checking if migrations have been applied
-docker exec -it <django_container> /bin/bash --> Run commands (python manage.py .. ones)
-
-docker volume inspect <volume name> --> To inspect volume info
-
-docker system prune --> To reclaim system memory
-```
-Instead of docker exec.., I found opening Docker Desktop, going to the container and going to 'exec' and executing my commands there more convenient.
